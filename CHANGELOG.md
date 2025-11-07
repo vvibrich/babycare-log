@@ -2,6 +2,45 @@
 
 Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 
+## [1.11.0] - 2025-11-07
+
+### ✨ Adicionado
+
+- **Compartilhamento Multi-usuário**: Sistema de convites e acesso compartilhado
+  - 👥 Múltiplos responsáveis por criança
+  - 📧 Sistema de convites por email
+  - 🔑 Níveis de acesso: Owner, Editor, Visualizador
+  - ✅ Aceitar/Recusar convites
+  - 👁️ Ver convites pendentes na home
+  - 🗑️ Remover acesso de usuários
+  - ⏰ Convites com expiração (7 dias)
+  - 💬 Mensagem opcional no convite
+
+### 🔒 Segurança
+
+- **RLS Atualizado**: Policies adaptadas para acesso compartilhado
+  - Owners: Controle total
+  - Editors: Ver e adicionar registros
+  - Viewers: Apenas visualizar
+  - Isolamento por nível de permissão
+
+### 🗄️ Database
+
+- Migration `007_add_child_sharing.sql`
+- Tabela `child_access` (many-to-many)
+- Tabela `child_invites` (convites)
+- Funções SQL: `accept_child_invite`, `reject_child_invite`
+- RLS policies atualizadas
+
+### 🎨 Componentes
+
+- `InviteUserDialog` - Enviar convites
+- `ManageChildAccess` - Gerenciar responsáveis
+- `PendingInvites` - Ver e responder convites
+- Badge component do shadcn/ui
+
+---
+
 ## [1.10.0] - 2025-11-07
 
 ### ✨ Adicionado

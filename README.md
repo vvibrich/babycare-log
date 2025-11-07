@@ -32,6 +32,10 @@ Sistema web para registrar, visualizar e exportar sintomas e medicações de cri
 - ✅ **Fotos**: Anexar imagens aos registros (até 5MB)
 - ✅ **Autenticação**: Login seguro com email e senha
 - ✅ **Multi-usuário**: Dados isolados por usuário (RLS)
+- ✅ **Compartilhamento**: Múltiplos responsáveis por criança
+  - Sistema de convites por email
+  - Níveis de acesso (Owner, Editor, Visualizador)
+  - Gerenciamento de permissões
 
 ## 🛠️ Configuração
 

@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { Child } from '@/types/record';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Plus, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Edit, Trash2, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { formatDate } from '@/utils/formatDate';
@@ -140,6 +140,14 @@ export default function ChildrenPage() {
                         )}
                       </div>
                       <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => router.push(`/children/${child.id}/access`)}
+                          title="Gerenciar Acesso"
+                        >
+                          <Users className="h-4 w-4 text-purple-500" />
+                        </Button>
                         <Button
                           variant="ghost"
                           size="sm"

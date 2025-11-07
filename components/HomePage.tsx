@@ -9,6 +9,7 @@ import { ChildSelector } from '@/components/ChildSelector';
 import { MedicationReminders } from '@/components/MedicationReminders';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { UserMenu } from '@/components/UserMenu';
+import { PendingInvites } from '@/components/PendingInvites';
 import { Button } from '@/components/ui/button';
 import { Plus, FileText, BarChart3, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
@@ -180,6 +181,9 @@ export function HomePage() {
             selectedChildId={selectedChildId}
             onChildChange={handleChildChange}
           />
+
+          {/* Pending Invites */}
+          <PendingInvites />
 
           {/* Action Buttons */}
           {selectedChildId && (
