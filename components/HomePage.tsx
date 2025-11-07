@@ -206,11 +206,11 @@ export function HomePage() {
               {/* Medication Reminders */}
               {selectedChildId && <MedicationReminders childId={selectedChildId} />}
 
-              {/* Temperature Chart */}
-              <TemperatureChart records={records} />
-
               {/* Records List */}
               <RecordList records={records} />
+
+              {/* Temperature Chart */}
+              <TemperatureChart records={records} />
             </>
           )}
         </div>

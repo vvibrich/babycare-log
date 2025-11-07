@@ -7,27 +7,22 @@ VALUES ('record-photos', 'record-photos', true)
 ON CONFLICT (id) DO NOTHING;
 
 -- Enable RLS for storage bucket
+-- Allow anyone to view photos (bucket is public)
 CREATE POLICY "Anyone can view photos"
 ON storage.objects FOR SELECT
 USING (bucket_id = 'record-photos');
 
-CREATE POLICY "Authenticated users can upload photos"
+-- Allow anyone to upload photos (using anon key)
+CREATE POLICY "Anyone can upload photos"
 ON storage.objects FOR INSERT
-WITH CHECK (
-  bucket_id = 'record-photos' 
-  AND auth.role() = 'authenticated'
-);
+WITH CHECK (bucket_id = 'record-photos');
 
-CREATE POLICY "Users can update their own photos"
+-- Allow anyone to update photos
+CREATE POLICY "Anyone can update photos"
 ON storage.objects FOR UPDATE
-USING (
-  bucket_id = 'record-photos' 
-  AND auth.role() = 'authenticated'
-);
+USING (bucket_id = 'record-photos');
 
-CREATE POLICY "Users can delete their own photos"
+-- Allow anyone to delete photos
+CREATE POLICY "Anyone can delete photos"
 ON storage.objects FOR DELETE
-USING (
-  bucket_id = 'record-photos' 
-  AND auth.role() = 'authenticated'
-);
+USING (bucket_id = 'record-photos');

@@ -2,6 +2,38 @@
 
 Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 
+## [1.8.1] - 2025-11-07
+
+### 🔧 Melhorado
+
+- **Responsividade Mobile**: Interface otimizada para dispositivos móveis
+  - Lista de registros em cards no mobile (tabela no desktop)
+  - Gráfico de temperatura adaptado (altura reduzida, labels angulados)
+  - Estatísticas empilhadas verticalmente no mobile
+  - Botões full-width nos lembretes de medicação (mobile)
+  - Eixos do gráfico otimizados para telas pequenas
+  - Labels de referência simplificadas
+  - Dark mode em todos os componentes responsivos
+
+### 🎨 UX/UI
+
+- **Design Modernizado dos Cards Mobile**:
+  - Gradientes coloridos no header (laranja para sintomas, azul para medicações)
+  - Borda lateral colorida (4px) como indicador visual
+  - Badges com emojis (🌡️ Sintoma / 💊 Medicação)
+  - Ícones com background arredondado e sombra
+  - Data em chip com ícone de calendário
+  - Temperatura destacada em badge vermelho
+  - Notas em bloco âmbar com borda lateral
+  - Fotos em aspect-ratio 16:9 com overlay "Ver foto"
+  - Botões com hover colorido (azul para editar, vermelho para excluir)
+  - Sombras e transições suaves
+  - Hierarquia visual clara e moderna
+- Gráfico com scroll horizontal se necessário
+- Margens ajustadas para melhor uso do espaço
+
+---
+
 ## [1.8.0] - 2025-11-07
 
 ### ✨ Adicionado

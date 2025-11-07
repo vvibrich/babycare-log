@@ -114,35 +114,39 @@ export function TemperatureChart({ records }: TemperatureChartProps) {
       </CardHeader>
       <CardContent>
         {/* Statistics */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="text-center p-3 bg-blue-50 rounded-lg">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6">
+          <div className="text-center p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
             <p className="text-xs text-muted-foreground mb-1">Média</p>
-            <p className="text-2xl font-bold text-blue-600">{avgTemp.toFixed(1)}°C</p>
+            <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{avgTemp.toFixed(1)}°C</p>
           </div>
-          <div className="text-center p-3 bg-red-50 rounded-lg">
+          <div className="text-center p-3 bg-red-50 dark:bg-red-950/30 rounded-lg">
             <p className="text-xs text-muted-foreground mb-1">Máxima</p>
-            <p className="text-2xl font-bold text-red-600">{maxTemp.toFixed(1)}°C</p>
+            <p className="text-2xl font-bold text-red-600 dark:text-red-400">{maxTemp.toFixed(1)}°C</p>
           </div>
-          <div className="text-center p-3 bg-green-50 rounded-lg">
+          <div className="text-center p-3 bg-green-50 dark:bg-green-950/30 rounded-lg">
             <p className="text-xs text-muted-foreground mb-1">Mínima</p>
-            <p className="text-2xl font-bold text-green-600">{minTemp.toFixed(1)}°C</p>
+            <p className="text-2xl font-bold text-green-600 dark:text-green-400">{minTemp.toFixed(1)}°C</p>
           </div>
         </div>
 
         {/* Chart */}
-        <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={temperatureData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+        <div className="w-full overflow-x-auto">
+          <ResponsiveContainer width="100%" height={300} className="sm:!h-[400px]">
+          <LineChart data={temperatureData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis 
               dataKey="date" 
               stroke="#6b7280"
-              style={{ fontSize: '12px' }}
+              style={{ fontSize: '10px' }}
+              angle={-45}
+              textAnchor="end"
+              height={60}
             />
             <YAxis 
               domain={[35, 42]}
               stroke="#6b7280"
-              style={{ fontSize: '12px' }}
-              label={{ value: 'Temperatura (°C)', angle: -90, position: 'insideLeft' }}
+              style={{ fontSize: '11px' }}
+              width={50}
             />
             <Tooltip 
               contentStyle={{ 
@@ -161,7 +165,7 @@ export function TemperatureChart({ records }: TemperatureChartProps) {
               y={37} 
               stroke="#10b981" 
               strokeDasharray="3 3" 
-              label={{ value: 'Normal (37°C)', position: 'right', fill: '#10b981', fontSize: 12 }}
+              label={{ value: 'Normal', position: 'insideTopRight', fill: '#10b981', fontSize: 10 }}
             />
             
             {/* Reference line for fever threshold */}
@@ -169,7 +173,7 @@ export function TemperatureChart({ records }: TemperatureChartProps) {
               y={37.8} 
               stroke="#f59e0b" 
               strokeDasharray="3 3" 
-              label={{ value: 'Febre (37.8°C)', position: 'right', fill: '#f59e0b', fontSize: 12 }}
+              label={{ value: 'Febre', position: 'insideTopRight', fill: '#f59e0b', fontSize: 10 }}
             />
             
             <Line 
@@ -183,6 +187,7 @@ export function TemperatureChart({ records }: TemperatureChartProps) {
             />
           </LineChart>
         </ResponsiveContainer>
+        </div>
 
         {/* Legend explanation */}
         <div className="mt-4 text-xs text-muted-foreground">

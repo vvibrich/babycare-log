@@ -105,9 +105,9 @@ export function MedicationReminders({ childId }: MedicationRemindersProps) {
   };
 
   return (
-    <Card className="border-2 border-orange-300 bg-orange-50/50">
+    <Card className="border-2 border-orange-300 bg-orange-50/50 dark:bg-orange-950/30 dark:border-orange-700">
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-xl text-orange-700">
+        <CardTitle className="flex items-center gap-2 text-xl text-orange-700 dark:text-orange-400">
           <Bell className="h-5 w-5 animate-pulse" />
           Lembretes de Medicação
         </CardTitle>
@@ -124,13 +124,13 @@ export function MedicationReminders({ childId }: MedicationRemindersProps) {
               key={reminder.id}
               className={`p-4 rounded-lg border-2 ${timeStatus.bgColor} transition-all hover:shadow-md`}
             >
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-lg">💊</span>
-                    <h4 className="font-semibold text-gray-900">{reminder.title}</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">{reminder.title}</h4>
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">{reminder.details}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">{reminder.details}</p>
                   <div className="flex items-center gap-2 text-xs">
                     <Clock className="h-3 w-3" />
                     <span className="text-muted-foreground">
@@ -145,7 +145,7 @@ export function MedicationReminders({ childId }: MedicationRemindersProps) {
                 <Button
                   size="sm"
                   onClick={() => handleMarkAsDone(reminder)}
-                  className="bg-green-600 hover:bg-green-700"
+                  className="bg-green-600 hover:bg-green-700 w-full sm:w-auto"
                 >
                   <Check className="h-4 w-4 mr-1" />
                   Aplicada
