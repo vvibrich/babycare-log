@@ -2,6 +2,18 @@
 
 Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 
+## [1.8.2] - 2025-11-07
+
+### 🐛 Corrigido
+
+- **EditRecordModal**: Campos de temperatura e tipo de sintoma agora aparecem ao editar sintomas
+  - Tipo de sintoma editável via dropdown
+  - Campo de temperatura (°C) com validação
+  - Campos condicionais (apenas para sintomas)
+  - Salvamento correto dos dados de sintomas
+
+---
+
 ## [1.8.1] - 2025-11-07
 
 ### 🔧 Melhorado

@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
-import { Record } from '@/types/record';
+import { Record, SymptomType, symptomTypeLabels } from '@/types/record';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -36,6 +37,8 @@ export function EditRecordModal({
     title: '',
     details: '',
     notes: '',
+    symptom_type: '' as SymptomType | '',
+    temperature: '',
     photo_url: null as string | null,
   });
 
@@ -45,6 +48,8 @@ export function EditRecordModal({
         title: record.title,
         details: record.details,
         notes: record.notes || '',
+        symptom_type: record.symptom_type || '',
+        temperature: record.temperature?.toString() || '',
         photo_url: record.photo_url || null,
       });
     }
@@ -57,14 +62,22 @@ export function EditRecordModal({
     setIsLoading(true);
 
     try {
+      const updateData: any = {
+        title: formData.title,
+        details: formData.details,
+        notes: formData.notes || null,
+        photo_url: formData.photo_url || null,
+      };
+
+      // Add symptom-specific fields if it's a symptom
+      if (record.type === 'symptom') {
+        updateData.symptom_type = formData.symptom_type || null;
+        updateData.temperature = formData.temperature ? parseFloat(formData.temperature) : null;
+      }
+
       const { error } = await supabase
         .from('records')
-        .update({
-          title: formData.title,
-          details: formData.details,
-          notes: formData.notes || null,
-          photo_url: formData.photo_url || null,
-        })
+        .update(updateData)
         .eq('id', record.id);
 
       if (error) throw error;
@@ -116,6 +129,52 @@ export function EditRecordModal({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Symptom Type (only for symptoms) */}
+          {record.type === 'symptom' && (
+            <div className="space-y-2">
+              <Label htmlFor="edit-symptom-type">Tipo de Sintoma</Label>
+              <Select
+                value={formData.symptom_type}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, symptom_type: value as SymptomType })
+                }
+              >
+                <SelectTrigger id="edit-symptom-type">
+                  <SelectValue placeholder="Selecione o tipo de sintoma" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(symptomTypeLabels).map(([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {/* Temperature (only for symptoms) */}
+          {record.type === 'symptom' && (
+            <div className="space-y-2">
+              <Label htmlFor="edit-temperature">Temperatura (°C)</Label>
+              <Input
+                id="edit-temperature"
+                type="number"
+                step="0.1"
+                min="35"
+                max="42"
+                value={formData.temperature}
+                onChange={(e) =>
+                  setFormData({ ...formData, temperature: e.target.value })
+                }
+                placeholder="Ex: 38.5"
+              />
+              <p className="text-xs text-muted-foreground">
+                Opcional. Insira apenas se for febre ou tiver medido temperatura.
+              </p>
+            </div>
+          )}
+
           <div className="space-y-2">
             <Label htmlFor="edit-title">{config.titleLabel}</Label>
             <Input
