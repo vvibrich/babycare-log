@@ -30,6 +30,8 @@ Sistema web para registrar, visualizar e exportar sintomas e medicações de cri
 - ✅ Interface responsiva e amigável
 - ✅ **PWA**: Aplicativo instalável (funciona offline)
 - ✅ **Fotos**: Anexar imagens aos registros (até 5MB)
+- ✅ **Autenticação**: Login seguro com email e senha
+- ✅ **Multi-usuário**: Dados isolados por usuário (RLS)
 
 ## 🛠️ Configuração
 

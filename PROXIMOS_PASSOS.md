@@ -50,6 +50,7 @@ npm run dev
 - [x] **PWA** - Transformar em app instalável ✅
 - [x] **Dark mode** - Tema escuro ✅
 - [x] **Fotos** - Anexar fotos aos registros ✅
+- [x] **Autenticação** - Login com email e senha ✅
 - [ ] **Compartilhar** - Enviar relatório por email/WhatsApp
 
 ### Melhorias Técnicas

@@ -8,6 +8,7 @@ import { TemperatureChart } from '@/components/TemperatureChart';
 import { ChildSelector } from '@/components/ChildSelector';
 import { MedicationReminders } from '@/components/MedicationReminders';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { UserMenu } from '@/components/UserMenu';
 import { Button } from '@/components/ui/button';
 import { Plus, FileText, BarChart3, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
@@ -146,7 +147,8 @@ export function HomePage() {
                 Registre e acompanhe os cuidados com seu bebê
               </p>
             </div>
-            <div className="flex gap-3 flex-wrap">
+            <div className="flex gap-3 flex-wrap items-center">
+              <UserMenu />
               <ThemeToggle />
               <Button 
                 variant="ghost" 

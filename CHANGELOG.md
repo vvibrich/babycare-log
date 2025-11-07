@@ -2,6 +2,35 @@
 
 Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 
+## [1.9.0] - 2025-11-07
+
+### ✨ Adicionado
+
+- **Autenticação com Supabase**: Sistema completo de login e cadastro
+  - Login com email e senha
+  - Cadastro de novos usuários
+  - Proteção de rotas (ProtectedRoute)
+  - Context API para gerenciar estado de autenticação
+  - Menu de usuário com email e logout
+  - Confirmação de email para novos usuários
+  
+### 🔒 Segurança
+
+- **Row Level Security (RLS)**: Dados isolados por usuário
+  - Usuários só veem seus próprios registros
+  - Usuários só veem suas próprias crianças
+  - Políticas RLS em todas as tabelas
+  - user_id vinculado a auth.users do Supabase
+  
+### 🗄️ Database
+
+- Migration `006_add_authentication_rls.sql`
+- Campo `user_id` em `records` e `children`
+- RLS policies para SELECT, INSERT, UPDATE, DELETE
+- Índices para performance
+
+---
+
 ## [1.8.2] - 2025-11-07
 
 ### 🐛 Corrigido
@@ -11,6 +40,11 @@ Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
   - Campo de temperatura (°C) com validação
   - Campos condicionais (apenas para sintomas)
   - Salvamento correto dos dados de sintomas
+
+- **Data de Nascimento**: Corrigido problema de timezone que salvava data com um dia a menos
+  - Datas agora são salvas exatamente como digitadas (YYYY-MM-DD)
+  - Formatação de datas sem conversão de timezone
+  - Exemplo: 08/07/2023 agora salva e exibe corretamente como 08/07/2023
 
 ---
 

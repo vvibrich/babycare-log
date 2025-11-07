@@ -1,5 +1,10 @@
 import { HomePage } from '@/components/HomePage';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
 
 export default function Home() {
-  return <HomePage />;
+  return (
+    <ProtectedRoute>
+      <HomePage />
+    </ProtectedRoute>
+  );
 }

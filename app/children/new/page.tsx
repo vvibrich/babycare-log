@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,6 +14,7 @@ import Link from 'next/link';
 
 export default function NewChildPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -25,12 +27,19 @@ export default function NewChildPage() {
     setIsLoading(true);
 
     try {
+      // Format birth_date to avoid timezone issues
+      // If date is "2023-07-08", save it as "2023-07-08" without time
+      const birthDate = formData.birth_date 
+        ? formData.birth_date // Keep as YYYY-MM-DD format
+        : null;
+
       const { error } = await supabase.from('children').insert([
         {
           name: formData.name,
-          birth_date: formData.birth_date || null,
+          birth_date: birthDate,
           notes: formData.notes || null,
           is_active: true,
+          user_id: user?.id,
         },
       ]);
 

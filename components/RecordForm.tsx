@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
+import { useAuth } from '@/contexts/AuthContext';
 import { RecordType, SymptomType, symptomTypeLabels } from '@/types/record';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +21,7 @@ interface RecordFormProps {
 
 export function RecordForm({ type }: RecordFormProps) {
   const router = useRouter();
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -47,6 +49,7 @@ export function RecordForm({ type }: RecordFormProps) {
         notes: formData.notes || null,
         child_id: selectedChildId || null,
         photo_url: formData.photo_url || null,
+        user_id: user?.id,
       };
 
       // Add reminder fields for medications
