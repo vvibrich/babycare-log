@@ -14,6 +14,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { DateRange } from 'react-day-picker';
 import { generatePDFReport, generateCSVReport } from '@/lib/generateReport';
+import { ShareDialog } from '@/components/ShareDialog';
 import { formatDateTime } from '@/utils/formatDate';
 import {
   Table,
@@ -215,7 +216,7 @@ export default function ReportPage() {
                 )}
               </div>
 
-              {/* Export Buttons */}
+              {/* Export and Share Buttons */}
               <div className="flex gap-3 flex-wrap">
                 <Button
                   onClick={handleExportPDF}
@@ -233,6 +234,13 @@ export default function ReportPage() {
                   <FileText className="mr-2 h-4 w-4" />
                   Exportar CSV
                 </Button>
+                <ShareDialog
+                  records={filteredRecords}
+                  childName={childName}
+                  startDate={dateRange?.from}
+                  endDate={dateRange?.to || dateRange?.from}
+                  disabled={filteredRecords.length === 0}
+                />
               </div>
             </CardContent>
           </Card>

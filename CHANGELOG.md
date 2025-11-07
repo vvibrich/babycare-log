@@ -2,6 +2,29 @@
 
 Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 
+## [1.10.0] - 2025-11-07
+
+### ✨ Adicionado
+
+- **Compartilhamento de Relatórios**: Novas opções para compartilhar
+  - 📱 Compartilhar via WhatsApp
+  - 📧 Enviar por Email (mailto)
+  - 📋 Copiar texto do relatório
+  - Dialog elegante com todas as opções
+  - Formatação otimizada para mensagens
+  - Resumo estatístico incluído
+  - Emojis para melhor visualização
+
+### 🔧 Melhorias
+
+- **Página de Relatórios**: Interface reorganizada
+  - Botões de exportar e compartilhar juntos
+  - ShareDialog centraliza opções
+  - Feedback visual ao copiar texto
+  - Informações do período no dialog
+
+---
+
 ## [1.9.0] - 2025-11-07
 
 ### ✨ Adicionado
