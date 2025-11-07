@@ -1,0 +1,41 @@
+{
+  "name": "BabyCare Log - Cuidados com Bebê",
+  "short_name": "BabyCare Log",
+  "description": "Sistema para registrar e acompanhar sintomas e medicações de crianças",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["health", "medical", "lifestyle"],
+  "shortcuts": [
+    {
+      "name": "Adicionar Sintoma",
+      "short_name": "Sintoma",
+      "description": "Registrar novo sintoma",
+      "url": "/add/symptom",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Adicionar Medicação",
+      "short_name": "Medicação",
+      "description": "Registrar nova medicação",
+      "url": "/add/medication",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

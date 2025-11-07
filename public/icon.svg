@@ -1,0 +1,27 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" rx="128" fill="#3b82f6"/>
+  
+  <!-- Baby icon -->
+  <circle cx="256" cy="200" r="80" fill="white"/>
+  
+  <!-- Body -->
+  <ellipse cx="256" cy="350" rx="120" ry="100" fill="white"/>
+  
+  <!-- Arms -->
+  <circle cx="160" cy="340" r="40" fill="white"/>
+  <circle cx="352" cy="340" r="40" fill="white"/>
+  
+  <!-- Eyes -->
+  <circle cx="236" cy="190" r="12" fill="#3b82f6"/>
+  <circle cx="276" cy="190" r="12" fill="#3b82f6"/>
+  
+  <!-- Smile -->
+  <path d="M 226 220 Q 256 235 286 220" stroke="#3b82f6" stroke-width="8" stroke-linecap="round" fill="none"/>
+  
+  <!-- Medical cross -->
+  <g transform="translate(360, 100)">
+    <rect x="-10" y="-30" width="20" height="60" fill="#ef4444" rx="4"/>
+    <rect x="-30" y="-10" width="60" height="20" fill="#ef4444" rx="4"/>
+  </g>
+</svg>
