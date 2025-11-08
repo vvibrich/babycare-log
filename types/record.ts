@@ -36,6 +36,8 @@ export interface Record {
   reminder_enabled?: boolean;
   next_dose_at?: string | null;
   photo_url?: string | null;
+  user_id?: string;
+  user_email?: string;
 }
 
 export interface RecordFormData {

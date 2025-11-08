@@ -51,7 +51,7 @@ export function HomePage() {
     
     try {
       let query = supabase
-        .from('records')
+        .from('records_with_user')
         .select('*');
 
       // Filter by child if selected
