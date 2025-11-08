@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { Record } from '@/types/record';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bell, Check, Clock } from 'lucide-react';
+import { Bell, Check, Clock, X } from 'lucide-react';
 import { formatDateTime } from '@/utils/formatDate';
 import { useRouter } from 'next/navigation';
 
@@ -81,6 +81,40 @@ export function MedicationReminders({ childId }: MedicationRemindersProps) {
     }
   };
 
+  const handleDismissReminder = async (reminder: Record) => {
+    try {
+      console.log('Dismissing reminder:', reminder.id);
+      
+      const now = new Date().toISOString();
+      
+      console.log('Updating created_at to:', now);
+
+      // Update created_at to now - the trigger will automatically recalculate next_dose_at
+      const { data, error } = await supabase
+        .from('records')
+        .update({ created_at: now })
+        .eq('id', reminder.id)
+        .select();
+
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+
+      console.log('Update successful:', data);
+
+      // Small delay to ensure data is persisted
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      // Refresh reminders
+      await fetchReminders();
+      router.refresh();
+    } catch (error) {
+      console.error('Error dismissing reminder:', error);
+      alert('Erro ao fechar lembrete. Por favor, tente novamente.');
+    }
+  };
+
   if (isLoading) {
     return null;
   }
@@ -142,14 +176,25 @@ export function MedicationReminders({ childId }: MedicationRemindersProps) {
                     <span>{timeStatus.text}</span>
                   </div>
                 </div>
-                <Button
-                  size="sm"
-                  onClick={() => handleMarkAsDone(reminder)}
-                  className="bg-green-600 hover:bg-green-700 w-full sm:w-auto"
-                >
-                  <Check className="h-4 w-4 mr-1" />
-                  Aplicada
-                </Button>
+                <div className="flex gap-2 w-full sm:w-auto">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleDismissReminder(reminder)}
+                    className="flex-1 sm:flex-initial border-gray-300 hover:bg-gray-100"
+                  >
+                    <X className="h-4 w-4 mr-1" />
+                    Dispensar
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => handleMarkAsDone(reminder)}
+                    className="flex-1 sm:flex-initial bg-green-600 hover:bg-green-700"
+                  >
+                    <Check className="h-4 w-4 mr-1" />
+                    Aplicada
+                  </Button>
+                </div>
               </div>
             </div>
           );
