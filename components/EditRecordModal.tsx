@@ -143,11 +143,13 @@ export function EditRecordModal({
                   <SelectValue placeholder="Selecione o tipo de sintoma" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(symptomTypeLabels).map(([value, label]) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
+                  {Object.entries(symptomTypeLabels)
+                    .filter(([key]) => key !== 'febre') // Remove opção legado de edições
+                    .map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
@@ -170,7 +172,7 @@ export function EditRecordModal({
                 placeholder="Ex: 38.5"
               />
               <p className="text-xs text-muted-foreground">
-                Opcional. Insira apenas se for febre ou tiver medido temperatura.
+                Opcional. Digite a temperatura medida (entre 35°C e 42°C). Valores ≥ 37.8°C são considerados febre.
               </p>
             </div>
           )}

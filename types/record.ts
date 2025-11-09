@@ -1,7 +1,8 @@
 export type RecordType = 'symptom' | 'medication';
 
 export type SymptomType = 
-  | 'febre'
+  | 'temperatura'
+  | 'febre' // Mantido para compatibilidade com registros antigos
   | 'tosse'
   | 'congestao_nasal'
   | 'diarreia'
@@ -50,7 +51,8 @@ export interface RecordFormData {
 }
 
 export const symptomTypeLabels: { [K in SymptomType]: string } = {
-  febre: '🤒 Febre',
+  temperatura: '🌡️ Temperatura',
+  febre: '🤒 Febre (legado)', // Mantido para compatibilidade
   tosse: '😷 Tosse',
   congestao_nasal: '🤧 Congestão Nasal',
   diarreia: '💩 Diarreia',
@@ -60,4 +62,19 @@ export const symptomTypeLabels: { [K in SymptomType]: string } = {
   irritacao: '😤 Irritação/Choro',
   falta_apetite: '🍽️ Falta de Apetite',
   outro: '📝 Outro',
+};
+
+// Constante para limite de febre
+export const FEVER_THRESHOLD = 37.8;
+
+// Função para verificar se temperatura indica febre
+export const isFever = (temperature?: number | null): boolean => {
+  return temperature !== null && temperature !== undefined && temperature >= FEVER_THRESHOLD;
+};
+
+// Função para formatar exibição de temperatura
+export const formatTemperature = (temperature?: number | null): string => {
+  if (temperature === null || temperature === undefined) return '';
+  const tempStr = `${temperature.toFixed(1)}°C`;
+  return isFever(temperature) ? `${tempStr} (Febre)` : tempStr;
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Record, symptomTypeLabels } from "@/types/record";
+import { Record, symptomTypeLabels, formatTemperature, isFever } from "@/types/record";
 import { formatDateTime } from "@/utils/formatDate";
 import { supabase } from "@/lib/supabaseClient";
 import Image from "next/image";
@@ -228,8 +228,12 @@ export function RecordList({ records }: RecordListProps) {
                     />
                     <div className="text-sm text-gray-700 dark:text-gray-300 font-medium">
                       {record.temperature ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg font-bold">
-                          🌡️ {record.temperature}°C
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-bold ${
+                          isFever(record.temperature)
+                            ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
+                            : "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                        }`}>
+                          🌡️ {formatTemperature(record.temperature)}
                         </span>
                       ) : (
                         record.details
@@ -352,9 +356,13 @@ export function RecordList({ records }: RecordListProps) {
                     )}
                   </TableCell>
                   <TableCell>
-                    {record.temperature
-                      ? `${record.temperature}°C`
-                      : record.details}
+                    {record.temperature ? (
+                      <span className={isFever(record.temperature) ? "font-semibold text-red-600 dark:text-red-400" : ""}>
+                        {formatTemperature(record.temperature)}
+                      </span>
+                    ) : (
+                      record.details
+                    )}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {record.notes || "-"}

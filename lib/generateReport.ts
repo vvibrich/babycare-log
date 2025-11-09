@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import { Record } from '@/types/record';
+import { Record, formatTemperature } from '@/types/record';
 import { formatDateTime } from '@/utils/formatDate';
 
 interface ReportOptions {
@@ -76,8 +76,9 @@ export function generatePDFReport(options: ReportOptions): void {
     doc.text(record.title, xPosition, yPosition, { maxWidth: columnWidths[2] - 2 });
     xPosition += columnWidths[2];
     
-    // Details
-    doc.text(record.details, xPosition, yPosition, { maxWidth: columnWidths[3] - 2 });
+    // Details - use formatted temperature if available
+    const detailsText = record.temperature ? formatTemperature(record.temperature) : record.details;
+    doc.text(detailsText, xPosition, yPosition, { maxWidth: columnWidths[3] - 2 });
     xPosition += columnWidths[3];
     
     // Notes
@@ -116,7 +117,7 @@ export function generateCSVReport(options: ReportOptions): void {
       formatDateTime(record.created_at),
       record.type === 'symptom' ? 'Sintoma' : 'Medicação',
       record.title,
-      record.details,
+      record.temperature ? formatTemperature(record.temperature) : record.details,
       record.notes || ''
     ];
     

@@ -65,8 +65,8 @@ export function RecordForm({ type }: RecordFormProps) {
         // Auto-fill title based on symptom type
         insertData.title = symptomTypeLabels[formData.symptom_type].replace(/^[^\s]+\s/, '');
         
-        // Add temperature if fever symptom
-        if (formData.symptom_type === 'febre' && formData.temperature) {
+        // Add temperature if temperatura or febre (legacy) symptom
+        if ((formData.symptom_type === 'temperatura' || formData.symptom_type === 'febre') && formData.temperature) {
           insertData.temperature = parseFloat(formData.temperature);
           insertData.details = `${formData.temperature}°C`;
         } else {
@@ -151,18 +151,20 @@ export function RecordForm({ type }: RecordFormProps) {
                     <SelectValue placeholder="Selecione o tipo de sintoma" />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.entries(symptomTypeLabels).map(([key, label]) => (
-                      <SelectItem key={key} value={key}>
-                        {label}
-                      </SelectItem>
-                    ))}
+                    {Object.entries(symptomTypeLabels)
+                      .filter(([key]) => key !== 'febre') // Remove opção legado de novos cadastros
+                      .map(([key, label]) => (
+                        <SelectItem key={key} value={key}>
+                          {label}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
               </div>
             )}
 
-            {/* Temperature Field (only for fever) */}
-            {type === 'symptom' && formData.symptom_type === 'febre' && (
+            {/* Temperature Field (for temperatura and febre legacy) */}
+            {type === 'symptom' && (formData.symptom_type === 'temperatura' || formData.symptom_type === 'febre') && (
               <div className="space-y-2">
                 <Label htmlFor="temperature">Temperatura (°C) *</Label>
                 <Input
@@ -179,7 +181,7 @@ export function RecordForm({ type }: RecordFormProps) {
                   required
                 />
                 <p className="text-xs text-muted-foreground">
-                  Digite a temperatura medida (entre 35°C e 42°C)
+                  Digite a temperatura medida (entre 35°C e 42°C). Valores ≥ 37.8°C são considerados febre.
                 </p>
               </div>
             )}

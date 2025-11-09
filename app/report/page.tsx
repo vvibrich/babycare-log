@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { Record, Child, symptomTypeLabels } from '@/types/record';
+import { Record, Child, symptomTypeLabels, formatTemperature, isFever } from '@/types/record';
 import { DateRangePicker } from '@/components/DateRangePicker';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -326,8 +326,12 @@ export default function ReportPage() {
                             }`} />
                             <div className="text-sm text-gray-700 dark:text-gray-300 font-medium">
                               {record.temperature ? (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg font-bold">
-                                  🌡️ {record.temperature}°C
+                                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-bold ${
+                                  isFever(record.temperature)
+                                    ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
+                                    : "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                                }`}>
+                                  🌡️ {formatTemperature(record.temperature)}
                                 </span>
                               ) : (
                                 record.details
@@ -397,7 +401,15 @@ export default function ReportPage() {
                             {formatDateTime(record.created_at)}
                           </TableCell>
                           <TableCell>{record.title}</TableCell>
-                          <TableCell>{record.details}</TableCell>
+                          <TableCell>
+                            {record.temperature ? (
+                              <span className={isFever(record.temperature) ? "font-semibold text-red-600 dark:text-red-400" : ""}>
+                                {formatTemperature(record.temperature)}
+                              </span>
+                            ) : (
+                              record.details
+                            )}
+                          </TableCell>
                           <TableCell className="text-muted-foreground">
                             {record.notes || '-'}
                           </TableCell>
