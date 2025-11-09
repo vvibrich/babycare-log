@@ -37,14 +37,6 @@ export function RecordForm({ type }: RecordFormProps) {
     created_at: '', // Empty = use current time
   });
 
-  // Set default datetime to current on mount
-  useEffect(() => {
-    const now = new Date();
-    // Format for datetime-local input: YYYY-MM-DDThh:mm
-    const formatted = now.toISOString().slice(0, 16);
-    setFormData(prev => ({ ...prev, created_at: formatted }));
-  }, []);
-
   useEffect(() => {
     fetchActiveIncidents();
   }, []);
@@ -102,8 +94,12 @@ export function RecordForm({ type }: RecordFormProps) {
         child_id: selectedChildId,
         photo_url: formData.photo_url || null,
         user_id: user.id,
-        created_at: formData.created_at ? new Date(formData.created_at).toISOString() : undefined,
       };
+      
+      // Only add created_at if user specified a custom date/time
+      if (formData.created_at) {
+        insertData.created_at = new Date(formData.created_at).toISOString();
+      }
       
       // Add incident_id only if one is selected (optional field, requires migration)
       if (formData.incident_id) {
@@ -388,7 +384,7 @@ export function RecordForm({ type }: RecordFormProps) {
             <div className="space-y-2 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700">
               <Label htmlFor="created_at" className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
-                Data e Hora do Registro
+                Data e Hora do Registro (opcional)
               </Label>
               <Input
                 id="created_at"
@@ -398,10 +394,9 @@ export function RecordForm({ type }: RecordFormProps) {
                   setFormData({ ...formData, created_at: e.target.value })
                 }
                 max={new Date().toISOString().slice(0, 16)}
-                required
               />
               <p className="text-xs text-muted-foreground">
-                📅 Você pode ajustar a data e hora para adicionar registros retroativos
+                📅 Se não preencher, será usado o horário atual. Você pode ajustar para registros retroativos.
               </p>
             </div>
 
