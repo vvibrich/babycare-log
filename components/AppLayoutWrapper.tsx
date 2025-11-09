@@ -3,6 +3,7 @@
 import { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { AppLayout } from './AppLayout';
+import { InstallPWAPrompt } from './InstallPWAPrompt';
 
 interface AppLayoutWrapperProps {
   children: ReactNode;
@@ -20,5 +21,10 @@ export function AppLayoutWrapper({ children }: AppLayoutWrapperProps) {
   }
   
   // Para páginas autenticadas, usa o layout com sidebar e bottom nav
-  return <AppLayout>{children}</AppLayout>;
+  return (
+    <>
+      <AppLayout>{children}</AppLayout>
+      <InstallPWAPrompt />
+    </>
+  );
 }
