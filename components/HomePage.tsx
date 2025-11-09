@@ -12,7 +12,7 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { UserMenu } from '@/components/UserMenu';
 import { PendingInvites } from '@/components/PendingInvites';
 import { Button } from '@/components/ui/button';
-import { Plus, FileText, BarChart3, RefreshCw } from 'lucide-react';
+import { Plus, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 
 export function HomePage() {
@@ -136,45 +136,32 @@ export function HomePage() {
   }, [selectedChildId, children.length]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors">
-      <div className="container mx-auto py-8 px-4">
-        <div className="flex flex-col gap-6">
-          {/* Header */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
-                👶 BabyCare Log
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-2">
-                Registre e acompanhe os cuidados com seu bebê
-              </p>
-            </div>
-            <div className="flex gap-3 flex-wrap items-center">
-              <UserMenu />
-              <ThemeToggle />
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={handleRefresh}
-                disabled={isRefreshing}
-                className="h-10"
-              >
-                <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-              </Button>
-              <Link href="/charts">
-                <Button variant="outline">
-                  <BarChart3 className="mr-2 h-4 w-4" />
-                  Gráficos
-                </Button>
-              </Link>
-              <Link href="/report">
-                <Button variant="outline">
-                  <FileText className="mr-2 h-4 w-4" />
-                  Relatórios
-                </Button>
-              </Link>
-            </div>
+    <div className="container mx-auto py-8 px-4">
+      <div className="flex flex-col gap-6">
+        {/* Header */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+              Início
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">
+              Acompanhe os cuidados com seu bebê
+            </p>
           </div>
+          <div className="flex gap-2 items-center">
+            <UserMenu />
+            <ThemeToggle />
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              title="Atualizar"
+            >
+              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            </Button>
+          </div>
+        </div>
 
           {/* Child Selector */}
           <ChildSelector
@@ -188,17 +175,17 @@ export function HomePage() {
 
           {/* Action Buttons */}
           {selectedChildId && (
-            <div className="flex gap-3 flex-wrap">
-              <Link href="/add/symptom">
-                <Button className="bg-orange-500 hover:bg-orange-600">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Adicionar Sintoma
+            <div className="grid grid-cols-2 gap-3">
+              <Link href="/add/symptom" className="w-full">
+                <Button className="w-full bg-orange-500 hover:bg-orange-600">
+                  <Plus className="mr-1 sm:mr-2 h-4 w-4 flex-shrink-0" />
+                  <span className="truncate">Sintoma</span>
                 </Button>
               </Link>
-              <Link href="/add/medication">
-                <Button className="bg-blue-500 hover:bg-blue-600">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Adicionar Medicação
+              <Link href="/add/medication" className="w-full">
+                <Button className="w-full bg-blue-500 hover:bg-blue-600">
+                  <Plus className="mr-1 sm:mr-2 h-4 w-4 flex-shrink-0" />
+                  <span className="truncate">Medicação</span>
                 </Button>
               </Link>
             </div>
@@ -224,11 +211,8 @@ export function HomePage() {
               {/* Records List */}
               <RecordList records={records} />
 
-              {/* Temperature Chart */}
-              <TemperatureChart records={records} />
             </>
           )}
-        </div>
       </div>
     </div>
   );

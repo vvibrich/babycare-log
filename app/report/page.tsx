@@ -9,8 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, FileDown, FileText } from 'lucide-react';
-import Link from 'next/link';
+import { FileDown, FileText } from 'lucide-react';
 import Image from 'next/image';
 import { DateRange } from 'react-day-picker';
 import { generatePDFReport, generateCSVReport } from '@/lib/generateReport';
@@ -155,20 +154,21 @@ export default function ReportPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
-      <div className="container mx-auto py-8 px-4 max-w-6xl">
-        <Link href="/">
-          <Button variant="ghost" className="mb-6">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar
-          </Button>
-        </Link>
+    <div className="container mx-auto py-8 px-4 max-w-6xl">
+      <div className="flex flex-col gap-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+            Relatórios
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            Selecione o período e exporte os registros em PDF ou CSV
+          </p>
+        </div>
 
-        <div className="flex flex-col gap-6">
-          {/* Header */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl">Gerar Relatório</CardTitle>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Configurações do Relatório</CardTitle>
               <CardDescription>
                 Selecione o período e exporte os registros em PDF ou CSV
               </CardDescription>
@@ -180,10 +180,7 @@ export default function ReportPage() {
                 {children.length === 0 ? (
                   <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <p className="text-sm text-yellow-800">
-                      Nenhuma criança cadastrada. 
-                      <Link href="/children/new" className="ml-1 underline font-medium">
-                        Adicione uma criança
-                      </Link>
+                      Nenhuma criança cadastrada. Acesse "Crianças" no menu para adicionar.
                     </p>
                   </div>
                 ) : (
@@ -442,7 +439,6 @@ export default function ReportPage() {
               </CardContent>
             </Card>
           )}
-        </div>
       </div>
     </div>
   );
