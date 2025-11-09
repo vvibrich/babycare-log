@@ -76,10 +76,18 @@ export function EditRecordModal({
 
   useEffect(() => {
     if (record) {
-      // Format created_at for datetime-local input
-      const createdAt = record.created_at 
-        ? new Date(record.created_at).toISOString().slice(0, 16)
-        : '';
+      // Format created_at for datetime-local input (local timezone)
+      let createdAt = '';
+      if (record.created_at) {
+        const date = new Date(record.created_at);
+        // Get local time components
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        createdAt = `${year}-${month}-${day}T${hours}:${minutes}`;
+      }
       
       setFormData({
         title: record.title,
