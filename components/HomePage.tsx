@@ -25,6 +25,13 @@ export function HomePage() {
 
   const fetchChildren = async () => {
     try {
+      // Verificar se há usuário autenticado antes de fazer a query
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setChildren([]);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('children')
         .select('*')
@@ -52,6 +59,15 @@ export function HomePage() {
     if (showRefreshing) setIsRefreshing(true);
     
     try {
+      // Verificar se há usuário autenticado antes de fazer a query
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setRecords([]);
+        setIsLoading(false);
+        setIsRefreshing(false);
+        return;
+      }
+
       let query = supabase
         .from('records_with_user')
         .select('*');

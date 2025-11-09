@@ -34,6 +34,13 @@ export default function RecordsPage() {
 
   const fetchChildren = async () => {
     try {
+      // Verificar se há usuário autenticado antes de fazer a query
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setChildren([]);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('children')
         .select('*')
@@ -60,6 +67,14 @@ export default function RecordsPage() {
     
     setIsLoading(true);
     try {
+      // Verificar se há usuário autenticado antes de fazer a query
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setRecords([]);
+        setIsLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('records_with_user')
         .select('*')
