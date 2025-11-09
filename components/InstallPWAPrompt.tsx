@@ -159,8 +159,8 @@ export function InstallPWAPrompt() {
 
           <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
             <p className="text-xs text-blue-700 dark:text-blue-300">
-              <strong>💡 Benefícios:</strong> Acesso mais rápido, funciona offline, 
-              notificações de lembretes e experiência completa de aplicativo!
+              <strong>💡 Benefícios:</strong> Acesso mais rápido, funciona completamente offline 
+              (registre dados sem internet!), notificações de lembretes e experiência completa de aplicativo!
             </p>
           </div>
         </div>

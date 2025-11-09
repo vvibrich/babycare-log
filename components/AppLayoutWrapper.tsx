@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { AppLayout } from './AppLayout';
 import { InstallPWAPrompt } from './InstallPWAPrompt';
+import { OfflineIndicator } from './OfflineIndicator';
 
 interface AppLayoutWrapperProps {
   children: ReactNode;
@@ -25,6 +26,7 @@ export function AppLayoutWrapper({ children }: AppLayoutWrapperProps) {
     <>
       <AppLayout>{children}</AppLayout>
       <InstallPWAPrompt />
+      <OfflineIndicator />
     </>
   );
 }
