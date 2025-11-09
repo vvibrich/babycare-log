@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     if (error) throw error;
-    router.push('/');
+    router.push('/dashboard');
   };
 
   const signUp = async (email: string, password: string) => {

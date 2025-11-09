@@ -138,11 +138,13 @@ window.matchMedia('(display-mode: standalone)').matches
 
 | Contexto | Detectado como | Ação |
 |----------|----------------|------|
-| Chrome Desktop | Navegador | → `/landing` |
-| Safari iOS | Navegador | → `/landing` |
+| Chrome Desktop (não logado) | Navegador | → `/landing` |
+| Safari iOS (não logado) | Navegador | → `/landing` |
+| Navegador (logado) | Navegador | → `/dashboard` |
 | PWA Instalado + Não logado | PWA | → `/login` |
 | PWA Instalado + Logado | PWA | → `/dashboard` |
 | Acesso direto `/landing` | Navegador | Mostra landing |
+| Login bem-sucedido | Qualquer | → `/dashboard` |
 
 ## 🚀 CTAs (Call to Actions)
 

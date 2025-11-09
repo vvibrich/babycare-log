@@ -31,8 +31,14 @@ export function PWARouter() {
         router.push('/login');
       }
     } else {
-      // If not PWA, redirect to landing page
-      router.push('/landing');
+      // If not PWA (browser)
+      if (user) {
+        // User is logged in via browser, go to dashboard
+        router.push('/dashboard');
+      } else {
+        // Not logged in, show landing page
+        router.push('/landing');
+      }
     }
   }, [isPWA, user, loading, router]);
 
