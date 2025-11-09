@@ -7,6 +7,7 @@ import { RecordList } from '@/components/RecordList';
 import { TemperatureChart } from '@/components/TemperatureChart';
 import { ChildSelector } from '@/components/ChildSelector';
 import { MedicationReminders } from '@/components/MedicationReminders';
+import { InsightsPanel } from '@/components/InsightsPanel';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { UserMenu } from '@/components/UserMenu';
 import { PendingInvites } from '@/components/PendingInvites';
@@ -211,6 +212,14 @@ export function HomePage() {
             <>
               {/* Medication Reminders */}
               {selectedChildId && <MedicationReminders childId={selectedChildId} />}
+
+              {/* Insights Panel - AI Analysis */}
+              {selectedChildId && (
+                <InsightsPanel 
+                  records={records} 
+                  child={children.find(c => c.id === selectedChildId)}
+                />
+              )}
 
               {/* Records List */}
               <RecordList records={records} />
