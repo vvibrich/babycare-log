@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/contexts/AuthContext';
-import { RecordType, SymptomType, symptomTypeLabels } from '@/types/record';
+import { RecordType, SymptomType, symptomTypeLabels, Incident } from '@/types/record';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,6 +23,7 @@ export function RecordForm({ type }: RecordFormProps) {
   const router = useRouter();
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [incidents, setIncidents] = useState<Incident[]>([]);
   const [formData, setFormData] = useState({
     title: '',
     details: '',
@@ -32,25 +33,77 @@ export function RecordForm({ type }: RecordFormProps) {
     reminder_enabled: false,
     reminder_interval_hours: '',
     photo_url: '' as string | null,
+    incident_id: '' as string | '',
   });
+
+  useEffect(() => {
+    fetchActiveIncidents();
+  }, []);
+
+  const fetchActiveIncidents = async () => {
+    try {
+      const selectedChildId = localStorage.getItem('selectedChildId');
+      if (!selectedChildId) return;
+
+      const { data, error } = await supabase
+        .from('incidents')
+        .select('*')
+        .eq('child_id', selectedChildId)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        // Se a tabela não existe (migration não aplicada), apenas não mostra incidentes
+        if (error.message?.includes('relation "incidents" does not exist')) {
+          console.warn('Tabela incidents não encontrada. O campo de incidente não será exibido.');
+          setIncidents([]);
+          return;
+        }
+        throw error;
+      }
+      setIncidents(data || []);
+    } catch (error) {
+      console.error('Error fetching incidents:', error);
+      setIncidents([]);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
+      // Verify user is authenticated
+      if (!user?.id) {
+        throw new Error('Usuário não autenticado. Faça login novamente.');
+      }
+
       // Get selected child from localStorage
       const selectedChildId = localStorage.getItem('selectedChildId');
+      
+      if (!selectedChildId) {
+        throw new Error('Nenhuma criança selecionada. Por favor, selecione uma criança primeiro.');
+      }
 
       const insertData: any = {
         type,
         title: formData.title,
         details: formData.details,
         notes: formData.notes || null,
-        child_id: selectedChildId || null,
+        child_id: selectedChildId,
         photo_url: formData.photo_url || null,
-        user_id: user?.id,
+        user_id: user.id,
       };
+      
+      // Add incident_id only if one is selected (optional field, requires migration)
+      if (formData.incident_id) {
+        insertData.incident_id = formData.incident_id;
+        console.log('✅ Vinculando a incidente:', formData.incident_id);
+      } else {
+        console.log('ℹ️ Sem incidente selecionado');
+      }
+      
+      console.log('📝 Dados completos a inserir:', { ...insertData, photo_url: insertData.photo_url ? '[presente]' : null });
 
       // Add reminder fields for medications
       if (type === 'medication' && formData.reminder_enabled && formData.reminder_interval_hours) {
@@ -84,9 +137,29 @@ export function RecordForm({ type }: RecordFormProps) {
       
       router.push('/');
       router.refresh();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving record:', error);
-      alert('Erro ao salvar registro. Por favor, tente novamente.');
+      
+      let errorMessage = error?.message || 'Erro desconhecido';
+      
+      // Detectar erros específicos e dar mensagens mais claras
+      if (errorMessage.includes('row-level security')) {
+        errorMessage = 'Você não tem permissão para criar registros para esta criança.\n\n' +
+                      'Possíveis causas:\n' +
+                      '1. Você não é dono/editor desta criança\n' +
+                      '2. Sua sessão expirou (tente fazer logout e login novamente)\n' +
+                      '3. A criança não foi configurada corretamente\n\n' +
+                      'Erro técnico: ' + errorMessage;
+      } else if (errorMessage.includes('incident_id') || errorMessage.includes('column "incident_id"')) {
+        errorMessage = '⚠️ Campo "incident_id" não existe no banco de dados.\n\n' +
+                      '🔧 SOLUÇÃO:\n' +
+                      'Aplique a migration 009_add_incidents.sql no Supabase Dashboard\n\n' +
+                      '💡 ALTERNATIVA IMEDIATA:\n' +
+                      'Tente criar o registro SEM vincular a um incidente\n\n' +
+                      'Erro técnico: ' + errorMessage;
+      }
+      
+      alert(`Erro ao salvar registro:\n\n${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
@@ -182,6 +255,46 @@ export function RecordForm({ type }: RecordFormProps) {
                 />
                 <p className="text-xs text-muted-foreground">
                   Digite a temperatura medida (entre 35°C e 42°C). Valores ≥ 37.8°C são considerados febre.
+                </p>
+              </div>
+            )}
+
+            {/* Incident Selector - Optional */}
+            {incidents.length > 0 && (
+              <div className="space-y-2 p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="incident_id" className="flex items-center gap-2">
+                    🔗 Vincular a um incidente (opcional)
+                  </Label>
+                  {formData.incident_id && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, incident_id: '' })}
+                      className="text-xs text-muted-foreground hover:text-foreground underline"
+                    >
+                      Limpar
+                    </button>
+                  )}
+                </div>
+                <Select
+                  value={formData.incident_id || undefined}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, incident_id: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Nenhum incidente selecionado" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {incidents.map((incident) => (
+                      <SelectItem key={incident.id} value={incident.id}>
+                        {incident.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Selecione um incidente para agrupar este registro
                 </p>
               </div>
             )}

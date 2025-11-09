@@ -157,6 +157,11 @@ export function RecordList({ records }: RecordListProps) {
                               ? "🌡️ Sintoma"
                               : "💊 Medicação"}
                           </span>
+                          {record.incident_id && (
+                            <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-purple-200 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300">
+                              🔗 Incidente
+                            </span>
+                          )}
                         </div>
                         <h3 className="font-bold text-base text-gray-900 dark:text-gray-100 leading-tight">
                           {record.symptom_type &&
@@ -335,25 +340,32 @@ export function RecordList({ records }: RecordListProps) {
                     {formatDateTime(record.created_at)}
                   </TableCell>
                   <TableCell>
-                    {record.symptom_type &&
-                    symptomTypeLabels[record.symptom_type] ? (
-                      <div>
-                        <div className="font-medium">
-                          {symptomTypeLabels[record.symptom_type]}
-                        </div>
-                        {record.title !==
-                          symptomTypeLabels[record.symptom_type].replace(
-                            /^[^\s]+\s/,
-                            ""
-                          ) && (
-                          <div className="text-sm text-muted-foreground">
-                            {record.title}
+                    <div className="space-y-1">
+                      {record.symptom_type &&
+                      symptomTypeLabels[record.symptom_type] ? (
+                        <div>
+                          <div className="font-medium">
+                            {symptomTypeLabels[record.symptom_type]}
                           </div>
-                        )}
-                      </div>
-                    ) : (
-                      record.title
-                    )}
+                          {record.title !==
+                            symptomTypeLabels[record.symptom_type].replace(
+                              /^[^\s]+\s/,
+                              ""
+                            ) && (
+                            <div className="text-sm text-muted-foreground">
+                              {record.title}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        record.title
+                      )}
+                      {record.incident_id && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300">
+                          🔗 Incidente
+                        </span>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     {record.temperature ? (

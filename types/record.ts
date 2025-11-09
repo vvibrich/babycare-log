@@ -39,6 +39,24 @@ export interface Record {
   photo_url?: string | null;
   user_id?: string;
   user_email?: string;
+  incident_id?: string | null;
+}
+
+export type IncidentStatus = 'active' | 'resolved' | 'monitoring';
+export type IncidentSeverity = 'low' | 'medium' | 'high';
+
+export interface Incident {
+  id: string;
+  child_id: string;
+  user_id: string;
+  title: string;
+  description?: string;
+  status: IncidentStatus;
+  severity: IncidentSeverity;
+  started_at: string;
+  resolved_at?: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface RecordFormData {

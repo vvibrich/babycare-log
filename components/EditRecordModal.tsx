@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
-import { Record, SymptomType, symptomTypeLabels } from '@/types/record';
+import { Record, SymptomType, symptomTypeLabels, Incident } from '@/types/record';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -33,6 +33,7 @@ export function EditRecordModal({
 }: EditRecordModalProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [incidents, setIncidents] = useState<Incident[]>([]);
   const [formData, setFormData] = useState({
     title: '',
     details: '',
@@ -40,7 +41,37 @@ export function EditRecordModal({
     symptom_type: '' as SymptomType | '',
     temperature: '',
     photo_url: null as string | null,
+    incident_id: '' as string | '',
   });
+
+  useEffect(() => {
+    if (open && record?.child_id) {
+      fetchActiveIncidents(record.child_id);
+    }
+  }, [open, record?.child_id]);
+
+  const fetchActiveIncidents = async (childId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('incidents')
+        .select('*')
+        .eq('child_id', childId)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        if (error.message?.includes('relation "incidents" does not exist')) {
+          setIncidents([]);
+          return;
+        }
+        throw error;
+      }
+      setIncidents(data || []);
+    } catch (error) {
+      console.error('Error fetching incidents:', error);
+      setIncidents([]);
+    }
+  };
 
   useEffect(() => {
     if (record) {
@@ -48,6 +79,7 @@ export function EditRecordModal({
         title: record.title,
         details: record.details,
         notes: record.notes || '',
+        incident_id: record.incident_id || '',
         symptom_type: record.symptom_type || '',
         temperature: record.temperature?.toString() || '',
         photo_url: record.photo_url || null,
@@ -69,6 +101,17 @@ export function EditRecordModal({
         photo_url: formData.photo_url || null,
       };
 
+      // Add incident_id (can be set to null to unlink)
+      if (formData.incident_id) {
+        updateData.incident_id = formData.incident_id;
+        console.log('✅ Vinculando a incidente:', formData.incident_id);
+      } else if (record.incident_id) {
+        updateData.incident_id = null;
+        console.log('🔗 Desvinculando de incidente');
+      }
+
+      console.log('📝 Dados completos a atualizar:', updateData);
+
       // Add symptom-specific fields if it's a symptom
       if (record.type === 'symptom') {
         updateData.symptom_type = formData.symptom_type || null;
@@ -84,9 +127,22 @@ export function EditRecordModal({
 
       onOpenChange(false);
       router.refresh();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating record:', error);
-      alert('Erro ao atualizar registro. Por favor, tente novamente.');
+      
+      let errorMessage = error?.message || 'Erro desconhecido';
+      
+      // Detectar erros específicos
+      if (errorMessage.includes('incident_id') || errorMessage.includes('column "incident_id"')) {
+        errorMessage = '⚠️ Campo "incident_id" não existe no banco de dados.\n\n' +
+                      '🔧 SOLUÇÃO:\n' +
+                      'Aplique a migration 009_add_incidents.sql no Supabase Dashboard\n\n' +
+                      '💡 ALTERNATIVA:\n' +
+                      'Edite o registro sem alterar o incidente\n\n' +
+                      'Erro técnico: ' + errorMessage;
+      }
+      
+      alert(`Erro ao atualizar registro:\n\n${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
@@ -173,6 +229,46 @@ export function EditRecordModal({
               />
               <p className="text-xs text-muted-foreground">
                 Opcional. Digite a temperatura medida (entre 35°C e 42°C). Valores ≥ 37.8°C são considerados febre.
+              </p>
+            </div>
+          )}
+
+          {/* Incident Selector - Optional */}
+          {incidents.length > 0 && (
+            <div className="space-y-2 p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg border border-purple-200 dark:border-purple-800">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="edit-incident-id" className="flex items-center gap-2">
+                  🔗 Vincular a um incidente (opcional)
+                </Label>
+                {formData.incident_id && (
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, incident_id: '' })}
+                    className="text-xs text-muted-foreground hover:text-foreground underline"
+                  >
+                    Desvincular
+                  </button>
+                )}
+              </div>
+              <Select
+                value={formData.incident_id || undefined}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, incident_id: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Nenhum incidente selecionado" />
+                </SelectTrigger>
+                <SelectContent>
+                  {incidents.map((incident) => (
+                    <SelectItem key={incident.id} value={incident.id}>
+                      {incident.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                {formData.incident_id ? 'Vinculado a um incidente' : 'Selecione para agrupar este registro'}
               </p>
             </div>
           )}

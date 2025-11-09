@@ -7,7 +7,8 @@ import { RecordList } from '@/components/RecordList';
 import { TemperatureChart } from '@/components/TemperatureChart';
 import { ChildSelector } from '@/components/ChildSelector';
 import { MedicationReminders } from '@/components/MedicationReminders';
-import { InsightsPanel } from '@/components/InsightsPanel';
+import { HealthMeter } from '@/components/HealthMeter';
+import { IncidentsPanel } from '@/components/IncidentsPanel';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { UserMenu } from '@/components/UserMenu';
 import { PendingInvites } from '@/components/PendingInvites';
@@ -200,11 +201,19 @@ export function HomePage() {
               {/* Medication Reminders */}
               {selectedChildId && <MedicationReminders childId={selectedChildId} />}
 
-              {/* Insights Panel - AI Analysis */}
+              {/* Health Meter - Saúdometro IA */}
               {selectedChildId && (
-                <InsightsPanel 
+                <HealthMeter 
                   records={records} 
                   child={children.find(c => c.id === selectedChildId)}
+                />
+              )}
+
+              {/* Incidents Panel */}
+              {selectedChildId && (
+                <IncidentsPanel 
+                  childId={selectedChildId}
+                  records={records}
                 />
               )}
 
