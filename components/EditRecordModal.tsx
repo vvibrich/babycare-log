@@ -18,7 +18,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { ImageUpload } from '@/components/ImageUpload';
-import { Save, X } from 'lucide-react';
+import { Save, X, Clock } from 'lucide-react';
 
 interface EditRecordModalProps {
   record: Record | null;
@@ -42,6 +42,7 @@ export function EditRecordModal({
     temperature: '',
     photo_url: null as string | null,
     incident_id: '' as string | '',
+    created_at: '',
   });
 
   useEffect(() => {
@@ -75,6 +76,11 @@ export function EditRecordModal({
 
   useEffect(() => {
     if (record) {
+      // Format created_at for datetime-local input
+      const createdAt = record.created_at 
+        ? new Date(record.created_at).toISOString().slice(0, 16)
+        : '';
+      
       setFormData({
         title: record.title,
         details: record.details,
@@ -83,6 +89,7 @@ export function EditRecordModal({
         symptom_type: record.symptom_type || '',
         temperature: record.temperature?.toString() || '',
         photo_url: record.photo_url || null,
+        created_at: createdAt,
       });
     }
   }, [record]);
@@ -99,6 +106,7 @@ export function EditRecordModal({
         details: formData.details,
         notes: formData.notes || null,
         photo_url: formData.photo_url || null,
+        created_at: formData.created_at ? new Date(formData.created_at).toISOString() : record.created_at,
       };
 
       // Add incident_id (can be set to null to unlink)
@@ -175,7 +183,7 @@ export function EditRecordModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <span>{config.icon}</span>
@@ -184,7 +192,8 @@ export function EditRecordModal({
           <DialogDescription>{config.description}</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+          <div className="space-y-4 overflow-y-auto pr-2 -mr-2 flex-1">
           {/* Symptom Type (only for symptoms) */}
           {record.type === 'symptom' && (
             <div className="space-y-2">
@@ -299,6 +308,27 @@ export function EditRecordModal({
             />
           </div>
 
+          {/* Date and Time Field */}
+          <div className="space-y-2 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700">
+            <Label htmlFor="edit-created-at" className="flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              Data e Hora do Registro
+            </Label>
+            <Input
+              id="edit-created-at"
+              type="datetime-local"
+              value={formData.created_at}
+              onChange={(e) =>
+                setFormData({ ...formData, created_at: e.target.value })
+              }
+              max={new Date().toISOString().slice(0, 16)}
+              required
+            />
+            <p className="text-xs text-muted-foreground">
+              📅 Ajuste a data e hora do registro se necessário
+            </p>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="edit-notes">Observações (opcional)</Label>
             <Textarea
@@ -317,8 +347,9 @@ export function EditRecordModal({
             currentImageUrl={formData.photo_url}
             onImageRemoved={() => setFormData({ ...formData, photo_url: null })}
           />
+          </div>
 
-          <DialogFooter>
+          <DialogFooter className="mt-6">
             <Button
               type="button"
               variant="outline"

@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ImageUpload } from '@/components/ImageUpload';
-import { ArrowLeft, Save, Bell } from 'lucide-react';
+import { ArrowLeft, Save, Bell, Clock } from 'lucide-react';
 
 interface RecordFormProps {
   type: RecordType;
@@ -34,7 +34,16 @@ export function RecordForm({ type }: RecordFormProps) {
     reminder_interval_hours: '',
     photo_url: '' as string | null,
     incident_id: '' as string | '',
+    created_at: '', // Empty = use current time
   });
+
+  // Set default datetime to current on mount
+  useEffect(() => {
+    const now = new Date();
+    // Format for datetime-local input: YYYY-MM-DDThh:mm
+    const formatted = now.toISOString().slice(0, 16);
+    setFormData(prev => ({ ...prev, created_at: formatted }));
+  }, []);
 
   useEffect(() => {
     fetchActiveIncidents();
@@ -93,6 +102,7 @@ export function RecordForm({ type }: RecordFormProps) {
         child_id: selectedChildId,
         photo_url: formData.photo_url || null,
         user_id: user.id,
+        created_at: formData.created_at ? new Date(formData.created_at).toISOString() : undefined,
       };
       
       // Add incident_id only if one is selected (optional field, requires migration)
@@ -373,6 +383,27 @@ export function RecordForm({ type }: RecordFormProps) {
                 )}
               </div>
             )}
+
+            {/* Date and Time Field */}
+            <div className="space-y-2 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700">
+              <Label htmlFor="created_at" className="flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                Data e Hora do Registro
+              </Label>
+              <Input
+                id="created_at"
+                type="datetime-local"
+                value={formData.created_at}
+                onChange={(e) =>
+                  setFormData({ ...formData, created_at: e.target.value })
+                }
+                max={new Date().toISOString().slice(0, 16)}
+                required
+              />
+              <p className="text-xs text-muted-foreground">
+                📅 Você pode ajustar a data e hora para adicionar registros retroativos
+              </p>
+            </div>
 
             <div className="space-y-2">
               <Label htmlFor="notes">Observações (opcional)</Label>
