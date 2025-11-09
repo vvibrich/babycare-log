@@ -64,7 +64,19 @@ export function HomePage() {
       const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) throw error;
-      setRecords(data || []);
+      
+      // Filtrar apenas registros de hoje
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      
+      const todayRecords = (data || []).filter(record => {
+        const recordDate = new Date(record.created_at);
+        return recordDate >= today && recordDate < tomorrow;
+      });
+      
+      setRecords(todayRecords);
     } catch (error) {
       console.error('Error fetching records:', error);
     } finally {
@@ -218,7 +230,31 @@ export function HomePage() {
               )}
 
               {/* Records List */}
-              <RecordList records={records} />
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <span className="font-medium">Registros de Hoje</span>
+                    <span className="text-xs">({records.length})</span>
+                  </div>
+                  <Link href="/records">
+                    <Button variant="ghost" size="sm" className="text-xs">
+                      Ver todos os registros →
+                    </Button>
+                  </Link>
+                </div>
+                {records.length > 0 ? (
+                  <RecordList records={records} />
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
+                    <p className="text-sm">Nenhum registro hoje</p>
+                    <p className="text-xs mt-1">
+                      <Link href="/records" className="underline">
+                        Ver registros anteriores
+                      </Link>
+                    </p>
+                  </div>
+                )}
+              </div>
 
             </>
           )}

@@ -8,11 +8,13 @@ import {
   FileText, 
   Baby,
   Sparkles,
+  History,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navigation = [
   { name: 'Início', href: '/', icon: Home },
+  { name: 'Registros', href: '/records', icon: History },
   { name: 'Gráficos', href: '/charts', icon: BarChart3 },
   { name: 'Relatórios', href: '/report', icon: FileText },
   { name: 'Crianças', href: '/children', icon: Baby },
