@@ -151,7 +151,7 @@ export default function ChildrenPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => router.push(`/children/edit/${child.id}`)}
+                          onClick={() => router.push(`/children/${child.id}/edit`)}
                           title="Editar"
                         >
                           <Edit className="h-4 w-4 text-blue-500" />

@@ -13,6 +13,9 @@ export type SymptomType =
   | 'falta_apetite'
   | 'outro';
 
+export type ChildSex = 'male' | 'female' | 'other' | 'prefer_not_to_say';
+export type BloodType = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-' | 'unknown';
+
 export interface Child {
   id: string;
   name: string;
@@ -21,6 +24,19 @@ export interface Child {
   notes?: string;
   created_at: string;
   is_active: boolean;
+  // Medical and personal information
+  sex?: ChildSex | null;
+  weight_kg?: number | null;
+  height_cm?: number | null;
+  blood_type?: BloodType | null;
+  allergies?: string | null;
+  medical_conditions?: string | null;
+  ongoing_medications?: string | null;
+  doctor_name?: string | null;
+  doctor_phone?: string | null;
+  insurance_number?: string | null;
+  last_weight_update?: string | null;
+  last_height_update?: string | null;
 }
 
 export interface Record {

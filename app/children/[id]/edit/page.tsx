@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
-import { useAuth } from '@/contexts/AuthContext';
+import { Child, ChildSex, BloodType } from '@/types/record';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,13 +11,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Save, User, Activity, Stethoscope } from 'lucide-react';
-import { ChildSex, BloodType } from '@/types/record';
 import Link from 'next/link';
 
-export default function NewChildPage() {
+export default function EditChildPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const params = useParams();
+  const childId = params.id as string;
+  
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
     birth_date: '',
@@ -34,55 +36,122 @@ export default function NewChildPage() {
     insurance_number: '',
   });
 
+  useEffect(() => {
+    fetchChild();
+  }, [childId]);
+
+  const fetchChild = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('children')
+        .select('*')
+        .eq('id', childId)
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        setFormData({
+          name: data.name || '',
+          birth_date: data.birth_date || '',
+          notes: data.notes || '',
+          sex: data.sex || '',
+          weight_kg: data.weight_kg?.toString() || '',
+          height_cm: data.height_cm?.toString() || '',
+          blood_type: data.blood_type || '',
+          allergies: data.allergies || '',
+          medical_conditions: data.medical_conditions || '',
+          ongoing_medications: data.ongoing_medications || '',
+          doctor_name: data.doctor_name || '',
+          doctor_phone: data.doctor_phone || '',
+          insurance_number: data.insurance_number || '',
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching child:', error);
+      alert('Erro ao carregar dados da criança.');
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // Format birth_date to avoid timezone issues
-      // If date is "2023-07-08", save it as "2023-07-08" without time
       const birthDate = formData.birth_date 
-        ? formData.birth_date // Keep as YYYY-MM-DD format
+        ? formData.birth_date
         : null;
 
       const now = new Date().toISOString();
       
-      const { error } = await supabase.from('children').insert([
-        {
-          name: formData.name,
-          birth_date: birthDate,
-          notes: formData.notes || null,
-          is_active: true,
-          user_id: user?.id,
-          sex: formData.sex || null,
-          weight_kg: formData.weight_kg ? parseFloat(formData.weight_kg) : null,
-          height_cm: formData.height_cm ? parseFloat(formData.height_cm) : null,
-          blood_type: formData.blood_type || null,
-          allergies: formData.allergies || null,
-          medical_conditions: formData.medical_conditions || null,
-          ongoing_medications: formData.ongoing_medications || null,
-          doctor_name: formData.doctor_name || null,
-          doctor_phone: formData.doctor_phone || null,
-          insurance_number: formData.insurance_number || null,
-          last_weight_update: formData.weight_kg ? now : null,
-          last_height_update: formData.height_cm ? now : null,
-        },
-      ]);
+      // Fetch current data to check if weight/height changed
+      const { data: currentData } = await supabase
+        .from('children')
+        .select('weight_kg, height_cm')
+        .eq('id', childId)
+        .single();
+
+      const updateData: any = {
+        name: formData.name,
+        birth_date: birthDate,
+        notes: formData.notes || null,
+        sex: formData.sex || null,
+        weight_kg: formData.weight_kg ? parseFloat(formData.weight_kg) : null,
+        height_cm: formData.height_cm ? parseFloat(formData.height_cm) : null,
+        blood_type: formData.blood_type || null,
+        allergies: formData.allergies || null,
+        medical_conditions: formData.medical_conditions || null,
+        ongoing_medications: formData.ongoing_medications || null,
+        doctor_name: formData.doctor_name || null,
+        doctor_phone: formData.doctor_phone || null,
+        insurance_number: formData.insurance_number || null,
+      };
+
+      // Update timestamps only if values changed
+      const newWeight = formData.weight_kg ? parseFloat(formData.weight_kg) : null;
+      const newHeight = formData.height_cm ? parseFloat(formData.height_cm) : null;
+      
+      if (newWeight !== currentData?.weight_kg) {
+        updateData.last_weight_update = now;
+      }
+      
+      if (newHeight !== currentData?.height_cm) {
+        updateData.last_height_update = now;
+      }
+
+      const { error } = await supabase
+        .from('children')
+        .update(updateData)
+        .eq('id', childId);
 
       if (error) throw error;
 
       router.push('/children');
       router.refresh();
     } catch (error) {
-      console.error('Error creating child:', error);
-      alert('Erro ao cadastrar criança. Por favor, tente novamente.');
+      console.error('Error updating child:', error);
+      alert('Erro ao atualizar criança. Por favor, tente novamente.');
     } finally {
       setIsLoading(false);
     }
   };
 
+  if (isFetching) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <div className="container mx-auto py-8 px-4 max-w-2xl">
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Carregando...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="container mx-auto py-8 px-4 max-w-2xl">
         <Link href="/children">
           <Button variant="ghost" className="mb-6">
@@ -93,9 +162,9 @@ export default function NewChildPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">➕ Nova Criança</CardTitle>
+            <CardTitle className="text-2xl">✏️ Editar Criança</CardTitle>
             <CardDescription>
-              Adicione uma nova criança ao sistema
+              Atualize as informações da criança
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -329,7 +398,7 @@ export default function NewChildPage() {
                   className="flex-1"
                 >
                   <Save className="mr-2 h-4 w-4" />
-                  {isLoading ? 'Salvando...' : 'Salvar'}
+                  {isLoading ? 'Salvando...' : 'Salvar Alterações'}
                 </Button>
                 <Button
                   type="button"
