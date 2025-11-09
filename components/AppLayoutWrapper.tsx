@@ -10,8 +10,8 @@ interface AppLayoutWrapperProps {
   children: ReactNode;
 }
 
-// Páginas que não devem ter o layout principal (login, signup, etc)
-const publicPages = ['/login', '/signup'];
+// Páginas que não devem ter o layout principal (login, signup, landing, etc)
+const publicPages = ['/login', '/signup', '/landing', '/'];
 
 export function AppLayoutWrapper({ children }: AppLayoutWrapperProps) {
   const pathname = usePathname();

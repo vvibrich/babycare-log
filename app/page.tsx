@@ -1,10 +1,5 @@
-import { HomePage } from '@/components/HomePage';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { PWARouter } from '@/components/PWARouter';
 
 export default function Home() {
-  return (
-    <ProtectedRoute>
-      <HomePage />
-    </ProtectedRoute>
-  );
+  return <PWARouter />;
 }
