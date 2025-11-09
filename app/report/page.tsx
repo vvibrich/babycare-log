@@ -12,9 +12,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { FileDown, FileText } from 'lucide-react';
 import Image from 'next/image';
 import { DateRange } from 'react-day-picker';
-import { generatePDFReport, generateCSVReport } from '@/lib/generateReport';
+import { generatePDFReport, generateCSVReport, ReportType } from '@/lib/generateReport';
 import { ShareDialog } from '@/components/ShareDialog';
 import { formatDateTime } from '@/utils/formatDate';
+import { Incident } from '@/types/record';
 import {
   Table,
   TableBody,
@@ -33,6 +34,10 @@ export default function ReportPage() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [childName, setChildName] = useState('Criança');
   const [isLoading, setIsLoading] = useState(true);
+  const [reportType, setReportType] = useState<ReportType>('all');
+  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [selectedIncidentId, setSelectedIncidentId] = useState<string>('');
+  const [selectedChild, setSelectedChild] = useState<Child | null>(null);
 
   useEffect(() => {
     fetchChildren();
@@ -47,12 +52,13 @@ export default function ReportPage() {
   useEffect(() => {
     if (selectedChildId) {
       fetchRecords();
+      fetchIncidents();
     }
   }, [selectedChildId]);
 
   useEffect(() => {
     filterRecords();
-  }, [records, dateRange]);
+  }, [records, dateRange, reportType, selectedIncidentId]);
 
   const fetchChildren = async () => {
     try {
@@ -72,10 +78,14 @@ export default function ReportPage() {
       if (savedChildId && childrenData.find(c => c.id === savedChildId)) {
         setSelectedChildId(savedChildId);
         const child = childrenData.find(c => c.id === savedChildId);
-        if (child) setChildName(child.name);
+        if (child) {
+          setChildName(child.name);
+          setSelectedChild(child);
+        }
       } else if (childrenData.length > 0) {
         setSelectedChildId(childrenData[0].id);
         setChildName(childrenData[0].name);
+        setSelectedChild(childrenData[0]);
       }
     } catch (error) {
       console.error('Error fetching children:', error);
@@ -106,41 +116,79 @@ export default function ReportPage() {
     }
   };
 
+  const fetchIncidents = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('incidents')
+        .select('*')
+        .eq('child_id', selectedChildId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        // If table doesn't exist, just ignore
+        if (error.message?.includes('relation "incidents" does not exist')) {
+          setIncidents([]);
+          return;
+        }
+        throw error;
+      }
+
+      setIncidents(data || []);
+    } catch (error) {
+      console.error('Error fetching incidents:', error);
+      setIncidents([]);
+    }
+  };
+
   const handleChildChange = (childId: string) => {
     setSelectedChildId(childId);
     const child = children.find(c => c.id === childId);
     if (child) {
       setChildName(child.name);
+      setSelectedChild(child);
     }
   };
 
   const filterRecords = () => {
-    if (!dateRange?.from) {
-      setFilteredRecords(records);
-      return;
+    let filtered = records;
+
+    // Filter by report type
+    if (reportType === 'symptoms') {
+      filtered = filtered.filter(r => r.type === 'symptom');
+    } else if (reportType === 'medications') {
+      filtered = filtered.filter(r => r.type === 'medication');
+    } else if (reportType === 'incident' && selectedIncidentId) {
+      filtered = filtered.filter(r => r.incident_id === selectedIncidentId);
     }
 
-    const filtered = records.filter((record) => {
-      const recordDate = new Date(record.created_at);
-      const startDate = new Date(dateRange.from!);
-      const endDate = new Date(dateRange.to || dateRange.from!);
+    // Filter by date range
+    if (dateRange?.from) {
+      filtered = filtered.filter((record) => {
+        const recordDate = new Date(record.created_at);
+        const startDate = new Date(dateRange.from!);
+        const endDate = new Date(dateRange.to || dateRange.from!);
 
-      // Set time to start/end of day for accurate comparison
-      startDate.setHours(0, 0, 0, 0);
-      endDate.setHours(23, 59, 59, 999);
+        // Set time to start/end of day for accurate comparison
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
 
-      return recordDate >= startDate && recordDate <= endDate;
-    });
+        return recordDate >= startDate && recordDate <= endDate;
+      });
+    }
 
     setFilteredRecords(filtered);
   };
 
   const handleExportPDF = () => {
+    const selectedIncident = incidents.find(i => i.id === selectedIncidentId);
     generatePDFReport({
       records: filteredRecords,
       childName,
       startDate: dateRange?.from,
       endDate: dateRange?.to || dateRange?.from,
+      reportType,
+      incidentTitle: selectedIncident?.title,
+      childData: selectedChild || undefined,
     });
   };
 
@@ -162,7 +210,7 @@ export default function ReportPage() {
             Relatórios
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Selecione o período e exporte os registros em PDF ou CSV
+            Gere relatórios personalizados de sintomas, medicações ou incidentes
           </p>
         </div>
 
@@ -170,7 +218,7 @@ export default function ReportPage() {
           <CardHeader>
             <CardTitle className="text-xl">Configurações do Relatório</CardTitle>
               <CardDescription>
-                Selecione o período e exporte os registros em PDF ou CSV
+                Escolha o tipo de relatório, período e exporte em PDF ou CSV
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -199,6 +247,65 @@ export default function ReportPage() {
                 )}
               </div>
 
+              {/* Report Type Selector */}
+              <div className="space-y-2">
+                <Label htmlFor="report-type">Tipo de Relatório</Label>
+                <Select value={reportType} onValueChange={(value: ReportType) => {
+                  setReportType(value);
+                  if (value !== 'incident') {
+                    setSelectedIncidentId('');
+                  }
+                }}>
+                  <SelectTrigger id="report-type">
+                    <SelectValue placeholder="Selecione o tipo de relatório" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">📋 Relatório Completo (Informal)</SelectItem>
+                    <SelectItem value="medical">🏥 Relatório Médico (Técnico)</SelectItem>
+                    <SelectItem value="symptoms">🌡️ Apenas Sintomas</SelectItem>
+                    <SelectItem value="medications">💊 Apenas Medicações</SelectItem>
+                    <SelectItem value="incident">🔗 Por Incidente</SelectItem>
+                  </SelectContent>
+                </Select>
+                {reportType === 'medical' && (
+                  <p className="text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/20 p-2 rounded-md border border-blue-200 dark:border-blue-800">
+                    💡 <strong>Relatório Médico:</strong> Utiliza terminologia técnica apropriada para apresentação a profissionais de saúde (ex: "Manifestações Clínicas", "Terapêutica Medicamentosa").
+                  </p>
+                )}
+                {reportType === 'all' && (
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    Relatório informal para controle pessoal dos pais e cuidadores.
+                  </p>
+                )}
+              </div>
+
+              {/* Incident Selector - Only shown if incident type is selected */}
+              {reportType === 'incident' && (
+                <div className="space-y-2">
+                  <Label htmlFor="incident">Selecione o Incidente</Label>
+                  {incidents.length === 0 ? (
+                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <p className="text-sm text-yellow-800">
+                        Nenhum incidente encontrado para esta criança.
+                      </p>
+                    </div>
+                  ) : (
+                    <Select value={selectedIncidentId} onValueChange={setSelectedIncidentId}>
+                      <SelectTrigger id="incident">
+                        <SelectValue placeholder="Selecione um incidente" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {incidents.map((incident) => (
+                          <SelectItem key={incident.id} value={incident.id}>
+                            {incident.title} - {incident.status === 'active' ? '🟢 Ativo' : incident.status === 'resolved' ? '✅ Resolvido' : '👁️ Monitorando'}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                </div>
+              )}
+
               {/* Date Range */}
               <div className="space-y-2">
                 <Label>Período</Label>
@@ -217,7 +324,7 @@ export default function ReportPage() {
               <div className="flex gap-3 flex-wrap">
                 <Button
                   onClick={handleExportPDF}
-                  disabled={filteredRecords.length === 0}
+                  disabled={filteredRecords.length === 0 || (reportType === 'incident' && !selectedIncidentId)}
                   className="bg-red-500 hover:bg-red-600"
                 >
                   <FileDown className="mr-2 h-4 w-4" />
@@ -225,7 +332,7 @@ export default function ReportPage() {
                 </Button>
                 <Button
                   onClick={handleExportCSV}
-                  disabled={filteredRecords.length === 0}
+                  disabled={filteredRecords.length === 0 || (reportType === 'incident' && !selectedIncidentId)}
                   variant="outline"
                 >
                   <FileText className="mr-2 h-4 w-4" />
@@ -236,7 +343,7 @@ export default function ReportPage() {
                   childName={childName}
                   startDate={dateRange?.from}
                   endDate={dateRange?.to || dateRange?.from}
-                  disabled={filteredRecords.length === 0}
+                  disabled={filteredRecords.length === 0 || (reportType === 'incident' && !selectedIncidentId)}
                 />
               </div>
             </CardContent>
