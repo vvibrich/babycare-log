@@ -17,6 +17,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import Link from 'next/link';
+import { Logo } from '@/components/Logo';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -60,7 +61,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Baby className="h-8 w-8 text-blue-600" />
+              <Logo className="text-blue-600" />
               <span className="text-2xl font-bold text-gray-900 dark:text-white">
                 BabyCare Log
               </span>
@@ -298,7 +299,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <Baby className="h-6 w-6 text-blue-500" />
+              <Logo size="sm" className="text-blue-500" />
               <span className="text-xl font-bold text-white">BabyCare Log</span>
             </div>
             <div className="text-center md:text-right">

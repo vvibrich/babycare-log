@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { UserPlus } from 'lucide-react';
 import Link from 'next/link';
+import { Logo } from '@/components/Logo';
 
 export default function SignUpPage() {
   const { signUp } = useAuth();
@@ -53,8 +54,11 @@ export default function SignUpPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
+          <div className="flex justify-center">
+            <Logo size="lg" className="text-blue-600" />
+          </div>
           <CardTitle className="text-2xl font-bold text-center">
-            👶 BabyCare Log
+            BabyCare Log
           </CardTitle>
           <CardDescription className="text-center">
             Crie sua conta para começar

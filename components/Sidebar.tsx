@@ -1,23 +1,24 @@
-'use client';
+"use client";
 
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
-import { 
-  Home, 
-  BarChart3, 
-  FileText, 
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import {
+  Home,
+  BarChart3,
+  FileText,
   Baby,
   Sparkles,
   History,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Logo } from "./Logo";
 
 const navigation = [
-  { name: 'Início', href: '/', icon: Home },
-  { name: 'Registros', href: '/records', icon: History },
-  { name: 'Gráficos', href: '/charts', icon: BarChart3 },
-  { name: 'Relatórios', href: '/report', icon: FileText },
-  { name: 'Crianças', href: '/children', icon: Baby },
+  { name: "Início", href: "/", icon: Home },
+  { name: "Registros", href: "/records", icon: History },
+  { name: "Gráficos", href: "/charts", icon: BarChart3 },
+  { name: "Relatórios", href: "/report", icon: FileText },
+  { name: "Crianças", href: "/children", icon: Baby },
 ];
 
 export function Sidebar() {
@@ -28,9 +29,7 @@ export function Sidebar() {
       <div className="flex flex-col flex-1 overflow-y-auto">
         {/* Logo/Brand */}
         <div className="flex items-center gap-2 px-6 py-6 border-b border-gray-200 dark:border-gray-800">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 text-white text-xl font-bold shadow-lg">
-            👶
-          </div>
+          <Logo size="lg" className="bg-transparent rounded-xl" />
           <div>
             <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">
               BabyCare Log
@@ -46,16 +45,16 @@ export function Sidebar() {
           {navigation.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
-            
+
             return (
               <Link
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  'flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200',
+                  "flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200",
                   isActive
-                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                    ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md"
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                 )}
               >
                 <Icon className="h-5 w-5 flex-shrink-0" />
