@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -66,7 +67,8 @@ export default function LandingPage() {
               <Logo className="text-primary" />
               <span className="text-2xl font-bold text-foreground">Cubbi</span>
             </div>
-            <div className="flex gap-3">
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
               <Link href="/login">
                 <Button
                   variant="ghost"
