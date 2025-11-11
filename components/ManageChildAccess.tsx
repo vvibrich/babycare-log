@@ -10,10 +10,15 @@ import { Users, Crown, Edit, Eye, X, Clock, Mail } from 'lucide-react';
 
 interface ChildAccess {
   id: string;
+  child_id: string;
   user_id: string;
   role: 'owner' | 'editor' | 'viewer';
+  granted_by: string | null;
   granted_at: string;
-  user_email?: string;
+  created_at: string;
+  user_email?: string | null;
+  user_full_name?: string | null;
+  user_display_name?: string | null;
 }
 
 interface ChildInvite {
@@ -23,6 +28,9 @@ interface ChildInvite {
   status: string;
   created_at: string;
   message?: string;
+  invitee_full_name?: string | null;
+  invitee_email_confirmed?: string | null;
+  invitee_display_name?: string | null;
 }
 
 interface ManageChildAccessProps {
@@ -46,7 +54,7 @@ export function ManageChildAccess({ childId, childName }: ManageChildAccessProps
     try {
       // Buscar acessos
       const { data: accessData, error: accessError } = await supabase
-        .from('child_access')
+        .from('child_access_with_details')
         .select('*')
         .eq('child_id', childId)
         .order('role', { ascending: true })
@@ -58,14 +66,12 @@ export function ManageChildAccess({ childId, childName }: ManageChildAccessProps
       const myAccess = accessData?.find((a) => a.user_id === user?.id);
       setIsOwner(myAccess?.role === 'owner');
 
-      // Buscar emails dos usuários (via auth.users - precisa de permissão)
-      // Por ora, vamos mostrar apenas o ID do usuário
       setAccesses(accessData || []);
 
       // Buscar convites pendentes (se for owner)
       if (myAccess?.role === 'owner') {
         const { data: inviteData, error: inviteError } = await supabase
-          .from('child_invites')
+          .from('child_invites_with_details')
           .select('*')
           .eq('child_id', childId)
           .eq('status', 'pending')
@@ -81,8 +87,28 @@ export function ManageChildAccess({ childId, childName }: ManageChildAccessProps
     }
   };
 
-  const handleRevokeAccess = async (accessId: string, userEmail?: string) => {
-    if (!confirm(`Tem certeza que deseja remover o acesso de ${userEmail || 'este usuário'}?`)) {
+  const formatDisplayName = (access: ChildAccess) => {
+    if (access.user_id === user?.id) {
+      return 'Você';
+    }
+
+    if (access.user_display_name) {
+      return access.user_display_name;
+    }
+
+    if (access.user_full_name) {
+      return access.user_full_name;
+    }
+
+    if (access.user_email) {
+      return access.user_email;
+    }
+
+    return `Usuário ${access.user_id.slice(0, 8)}...`;
+  };
+
+  const handleRevokeAccess = async (accessId: string, userLabel?: string) => {
+    if (!confirm(`Tem certeza que deseja remover o acesso de ${userLabel || 'este usuário'}?`)) {
       return;
     }
 
@@ -199,11 +225,7 @@ export function ManageChildAccess({ childId, childName }: ManageChildAccessProps
                     {getRoleIcon(access.role)}
                     <div>
                       <p className="font-medium text-sm">
-                        {access.user_id === user?.id ? (
-                          <span className="text-primary">Você</span>
-                        ) : (
-                          access.user_email || `Usuário ${access.user_id.slice(0, 8)}...`
-                        )}
+                        {formatDisplayName(access)}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {getRoleLabel(access.role)}
@@ -214,7 +236,7 @@ export function ManageChildAccess({ childId, childName }: ManageChildAccessProps
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => handleRevokeAccess(access.id, access.user_email)}
+                      onClick={() => handleRevokeAccess(access.id, formatDisplayName(access))}
                     >
                       <X className="h-4 w-4 text-destructive" />
                     </Button>
@@ -243,26 +265,24 @@ export function ManageChildAccess({ childId, childName }: ManageChildAccessProps
               {invites.map((invite) => (
                 <div
                   key={invite.id}
-                  className="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg"
+                  className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
                 >
                   <div className="flex items-center gap-3">
-                    <Mail className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+                    <Mail className="h-4 w-4 text-blue-500" />
                     <div>
-                      <p className="font-medium text-sm">{invite.invitee_email}</p>
+                      <p className="font-medium text-sm">
+                        {invite.invitee_display_name || invite.invitee_email}
+                      </p>
                       <p className="text-xs text-muted-foreground">
                         {getRoleLabel(invite.role)} • {new Date(invite.created_at).toLocaleDateString('pt-BR')}
                       </p>
-                      {invite.message && (
-                        <p className="text-xs text-muted-foreground mt-1 italic">
-                          "{invite.message}"
-                        </p>
-                      )}
                     </div>
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => handleCancelInvite(invite.id)}
+                    title="Cancelar convite"
                   >
                     <X className="h-4 w-4" />
                   </Button>
