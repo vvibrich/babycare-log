@@ -215,13 +215,13 @@ export function HomePage() {
         {selectedChildId && (
           <div className="grid grid-cols-2 gap-3">
             <Link href="/add/symptom" className="w-full">
-              <Button className="w-full bg-orange-500 hover:bg-orange-600">
+              <Button className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90">
                 <Plus className="mr-1 sm:mr-2 h-4 w-4 flex-shrink-0" />
                 <span className="truncate">Sintoma</span>
               </Button>
             </Link>
             <Link href="/add/medication" className="w-full">
-              <Button className="w-full bg-blue-500 hover:bg-blue-600">
+              <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80">
                 <Plus className="mr-1 sm:mr-2 h-4 w-4 flex-shrink-0" />
                 <span className="truncate">Medicação</span>
               </Button>
