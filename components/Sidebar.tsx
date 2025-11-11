@@ -9,6 +9,7 @@ import {
   Baby,
   Sparkles,
   History,
+  User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "./Logo";
@@ -19,6 +20,7 @@ const navigation = [
   { name: "Gráficos", href: "/charts", icon: BarChart3 },
   { name: "Relatórios", href: "/report", icon: FileText },
   { name: "Crianças", href: "/children", icon: Baby },
+  { name: "Perfil", href: "/profile", icon: User },
 ];
 
 export function Sidebar() {
