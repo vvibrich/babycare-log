@@ -1,7 +1,7 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
 import { Record, Child, Incident } from '@/types/record';
 
-interface BabyCareDB extends DBSchema {
+interface CubbiDB extends DBSchema {
   records: {
     key: string;
     value: Record & { _pendingSync?: boolean };
@@ -37,12 +37,12 @@ interface BabyCareDB extends DBSchema {
   };
 }
 
-let dbInstance: IDBPDatabase<BabyCareDB> | null = null;
+let dbInstance: IDBPDatabase<CubbiDB> | null = null;
 
-export async function getDB(): Promise<IDBPDatabase<BabyCareDB>> {
+export async function getDB(): Promise<IDBPDatabase<CubbiDB>> {
   if (dbInstance) return dbInstance;
 
-  dbInstance = await openDB<BabyCareDB>('babycare-offline', 3, {
+  dbInstance = await openDB<CubbiDB>('cubbi-offline', 3, {
     upgrade(db, oldVersion, newVersion, transaction) {
       // Records store
       if (!db.objectStoreNames.contains('records')) {

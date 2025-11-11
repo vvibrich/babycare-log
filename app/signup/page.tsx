@@ -58,7 +58,7 @@ export default function SignUpPage() {
             <Logo size="lg" className="text-blue-600" />
           </div>
           <CardTitle className="text-2xl font-bold text-center">
-            BabyCare Log
+            Cubbi
           </CardTitle>
           <CardDescription className="text-center">
             Crie sua conta para começar

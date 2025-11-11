@@ -1,6 +1,6 @@
 {
-  "name": "BabyCare Log - Cuidados com Bebê",
-  "short_name": "BabyCare Log",
+  "name": "Cubbi - Cuidados com Bebê",
+  "short_name": "Cubbi",
   "description": "Sistema para registrar e acompanhar sintomas e medicações de crianças",
   "start_url": "/",
   "display": "standalone",

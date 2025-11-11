@@ -32,7 +32,7 @@ export function Sidebar() {
           <Logo size="lg" className="bg-transparent rounded-xl" />
           <div>
             <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">
-              BabyCare Log
+              Cubbi
             </h1>
             <p className="text-xs text-gray-500 dark:text-gray-400">
               Cuidado inteligente

@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-O BabyCare Log possui um sistema de categorização de sintomas que facilita o registro e a organização dos dados.
+O Cubbi possui um sistema de categorização de sintomas que facilita o registro e a organização dos dados.
 
 ## 📋 Tipos Disponíveis
 

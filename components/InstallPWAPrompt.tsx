@@ -66,7 +66,7 @@ export function InstallPWAPrompt() {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <Smartphone className="h-6 w-6 text-blue-500" />
-            Instale o BabyCare Log
+            Instale o Cubbi
           </DialogTitle>
           <DialogDescription>
             Instale o app no seu celular para acesso rápido e melhor experiência!
@@ -102,7 +102,7 @@ export function InstallPWAPrompt() {
                 <li className="flex gap-2">
                   <span className="font-bold text-blue-600">4.</span>
                   <span>
-                    Pronto! O ícone do BabyCare Log aparecerá na sua tela inicial
+                    Pronto! O ícone do Cubbi aparecerá na sua tela inicial
                   </span>
                 </li>
               </ol>
@@ -137,7 +137,7 @@ export function InstallPWAPrompt() {
                 <li className="flex gap-2">
                   <span className="font-bold text-blue-600">4.</span>
                   <span>
-                    Pronto! O ícone do BabyCare Log aparecerá na sua tela inicial
+                    Pronto! O ícone do Cubbi aparecerá na sua tela inicial
                   </span>
                 </li>
               </ol>
@@ -152,7 +152,7 @@ export function InstallPWAPrompt() {
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Procure pela opção <strong>"Adicionar à tela inicial"</strong> ou 
                 <strong> "Instalar app"</strong> no menu do seu navegador para instalar 
-                o BabyCare Log como um aplicativo.
+                o Cubbi como um aplicativo.
               </p>
             </div>
           )}

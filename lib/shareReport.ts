@@ -14,7 +14,7 @@ interface ShareReportOptions {
 export function generateReportText(options: ShareReportOptions): string {
   const { records, childName, startDate, endDate } = options;
 
-  let text = `📊 *Relatório BabyCare Log*\n\n`;
+  let text = `📊 *Relatório Cubbi*\n\n`;
   text += `👶 *Criança:* ${childName}\n`;
 
   if (startDate && endDate) {
@@ -69,7 +69,7 @@ export function generateReportText(options: ShareReportOptions): string {
     });
   }
 
-  text += `\n_Gerado pelo BabyCare Log_`;
+  text += `\n_Gerado pelo Cubbi_`;
 
   return text;
 }
@@ -94,7 +94,7 @@ export function shareViaEmail(options: ShareReportOptions) {
   const { childName, startDate, endDate } = options;
   const text = generateReportText(options);
   
-  let subject = `Relatório BabyCare - ${childName}`;
+  let subject = `Relatório Cubbi - ${childName}`;
   if (startDate && endDate) {
     const start = startDate.toLocaleDateString('pt-BR');
     const end = endDate.toLocaleDateString('pt-BR');

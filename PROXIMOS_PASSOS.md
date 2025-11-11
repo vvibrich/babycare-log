@@ -1,4 +1,4 @@
-# 📝 Próximos Passos - BabyCare Log
+# 📝 Próximos Passos - Cubbi
 
 ## ✅ O que já está pronto
 

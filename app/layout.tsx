@@ -16,14 +16,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BabyCare Log - Registro de Cuidados",
+  title: "Cubbi - Registro de Cuidados",
   description: "Sistema para registrar e acompanhar sintomas e medicações de crianças",
   manifest: "/manifest.json",
-  themeColor: "#3b82f6",
+  themeColor: "#B39DDB",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "BabyCare Log",
+    title: "Cubbi",
   },
   viewport: {
     width: "device-width",

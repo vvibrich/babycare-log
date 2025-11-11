@@ -1,8 +1,8 @@
-# 🌐 Landing Page - BabyCare Log
+# 🌐 Landing Page - Cubbi
 
 ## 📋 Visão Geral
 
-A landing page foi criada para apresentar o BabyCare Log a novos usuários, destacando recursos e benefícios. O sistema de roteamento inteligente garante que usuários do PWA sejam redirecionados automaticamente.
+A landing page foi criada para apresentar o Cubbi a novos usuários, destacando recursos e benefícios. O sistema de roteamento inteligente garante que usuários do PWA sejam redirecionados automaticamente.
 
 ## 🔀 Sistema de Roteamento
 
@@ -86,7 +86,7 @@ components/
 ### ✨ Seções
 
 1. **Header/Navbar**
-   - Logo do BabyCare Log
+   - Logo do Cubbi
    - Botões de "Entrar" e "Começar Grátis"
    - Sticky no topo
 
@@ -175,7 +175,7 @@ window.matchMedia('(display-mode: standalone)').matches
 
 ```typescript
 {
-  title: "BabyCare Log - Registro de Cuidados do seu Bebê",
+  title: "Cubbi - Registro de Cuidados do seu Bebê",
   description: "Acompanhe sintomas, medicações e gere relatórios profissionais...",
   keywords: ["bebê", "cuidados", "sintomas", "medicação", ...],
   openGraph: { ... }

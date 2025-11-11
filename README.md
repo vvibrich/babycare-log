@@ -1,4 +1,4 @@
-# 👶 BabyCare Log
+# 👶 Cubbi
 
 Sistema web para registrar, visualizar e exportar sintomas e medicações de crianças.
 

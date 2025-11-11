@@ -1,34 +1,42 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { LogIn } from 'lucide-react';
-import Link from 'next/link';
-import { Logo } from '@/components/Logo';
+import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { LogIn } from "lucide-react";
+import Link from "next/link";
+import { Logo } from "@/components/Logo";
 
 export default function LoginPage() {
   const { signIn } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsLoading(true);
 
     try {
       await signIn(formData.email, formData.password);
     } catch (error: any) {
-      console.error('Login error:', error);
-      setError(error.message || 'Erro ao fazer login. Verifique suas credenciais.');
+      console.error("Login error:", error);
+      setError(
+        error.message || "Erro ao fazer login. Verifique suas credenciais."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -42,7 +50,7 @@ export default function LoginPage() {
             <Logo size="lg" className="text-blue-600" />
           </div>
           <CardTitle className="text-2xl font-bold text-center">
-            BabyCare Log
+            Cubbi
           </CardTitle>
           <CardDescription className="text-center">
             Entre com sua conta para continuar
@@ -52,7 +60,9 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg">
-                <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                <p className="text-sm text-red-600 dark:text-red-400">
+                  {error}
+                </p>
               </div>
             )}
 
@@ -86,18 +96,17 @@ export default function LoginPage() {
               />
             </div>
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isLoading}
-            >
+            <Button type="submit" className="w-full" disabled={isLoading}>
               <LogIn className="mr-2 h-4 w-4" />
-              {isLoading ? 'Entrando...' : 'Entrar'}
+              {isLoading ? "Entrando..." : "Entrar"}
             </Button>
 
             <div className="text-center text-sm">
               <span className="text-muted-foreground">Não tem uma conta? </span>
-              <Link href="/signup" className="text-blue-600 hover:underline dark:text-blue-400">
+              <Link
+                href="/signup"
+                className="text-blue-600 hover:underline dark:text-blue-400"
+              >
                 Cadastre-se
               </Link>
             </div>

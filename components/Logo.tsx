@@ -17,7 +17,7 @@ export function Logo({ className = '', size = 'md' }: LogoProps) {
   return (
     <Image
       src="/icon.svg"
-      alt="BabyCare Log"
+      alt="Cubbi"
       width={size === 'sm' ? 24 : size === 'md' ? 32 : 48}
       height={size === 'sm' ? 24 : size === 'md' ? 32 : 48}
       className={`${sizeClasses[size]} ${className}`}

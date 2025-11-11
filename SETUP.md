@@ -1,4 +1,4 @@
-# 🚀 Setup Rápido - BabyCare Log
+# 🚀 Setup Rápido - Cubbi
 
 ## 1. Configurar Supabase
 
@@ -6,7 +6,7 @@
 
 1. Acesse https://supabase.com
 2. Clique em "New Project"
-3. Escolha um nome (ex: `babycare-log`)
+3. Escolha um nome (ex: `cubbi`)
 4. Defina uma senha do banco de dados
 5. Selecione a região (preferencialmente próxima ao Brasil)
 6. Aguarde a criação do projeto (~2 minutos)

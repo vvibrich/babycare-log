@@ -193,4 +193,4 @@ ON CONFLICT DO NOTHING;
 ---
 
 **Criado em:** 07/11/2025  
-**Versão do BabyCare:** 1.11.0
+**Versão do Cubbi:** 1.11.0

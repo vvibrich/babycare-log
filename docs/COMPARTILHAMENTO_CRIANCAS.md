@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-O BabyCare Log permite que múltiplos responsáveis acessem os dados de uma mesma criança através de um sistema de convites e permissões.
+O Cubbi permite que múltiplos responsáveis acessem os dados de uma mesma criança através de um sistema de convites e permissões.
 
 ## Níveis de Acesso
 

@@ -2,7 +2,7 @@
 
 ## Gráfico de Temperatura
 
-O BabyCare Log possui um gráfico interativo que mostra a evolução da temperatura ao longo do tempo.
+O Cubbi possui um gráfico interativo que mostra a evolução da temperatura ao longo do tempo.
 
 ### 🎯 Funcionalidades
 

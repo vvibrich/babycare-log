@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-O BabyCare Log utiliza autenticação via Supabase Auth com email e senha. Cada usuário tem acesso apenas aos seus próprios dados através de Row Level Security (RLS).
+O Cubbi utiliza autenticação via Supabase Auth com email e senha. Cada usuário tem acesso apenas aos seus próprios dados através de Row Level Security (RLS).
 
 ## Funcionalidades
 

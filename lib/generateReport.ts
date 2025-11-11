@@ -96,7 +96,7 @@ export function generatePDFReport(options: ReportOptions): void {
   doc.setFontSize(24);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(255, 255, 255);
-  doc.text("BabyCare Log", pageWidth / 2, 15, { align: "center" });
+  doc.text("Cubbi", pageWidth / 2, 15, { align: "center" });
 
   doc.setFontSize(11);
   doc.setFont("helvetica", "normal");
@@ -383,14 +383,14 @@ export function generatePDFReport(options: ReportOptions): void {
     if (reportType === "medical") {
       // Medical report footer with disclaimer
       doc.text(
-        "Relatório gerado pelo BabyCare Log para fins médicos – Este documento contém informações de saúde confidenciais",
+        "Relatório gerado pelo Cubbi para fins médicos – Este documento contém informações de saúde confidenciais",
         pageWidth / 2,
         pageHeight - 12,
         { align: "center" }
       );
     } else {
       doc.text(
-        "Gerado automaticamente pelo BabyCare Log – babycarelog.app",
+        "Gerado automaticamente pelo Cubbi – cubbi.app.br",
         pageWidth / 2,
         pageHeight - 12,
         { align: "center" }
@@ -408,7 +408,7 @@ export function generatePDFReport(options: ReportOptions): void {
   }
 
   // Save the PDF
-  const fileName = `babycare-log-${childName
+  const fileName = `cubbi-${childName
     .toLowerCase()
     .replace(/\s+/g, "-")}-${new Date().toISOString().split("T")[0]}.pdf`;
   doc.save(fileName);
@@ -449,7 +449,7 @@ export function generateCSVReport(options: ReportOptions): void {
   link.setAttribute("href", url);
   link.setAttribute(
     "download",
-    `babycare-log-${new Date().toISOString().split("T")[0]}.csv`
+    `cubbi-${new Date().toISOString().split("T")[0]}.csv`
   );
   link.style.visibility = "hidden";
 

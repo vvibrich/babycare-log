@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-O BabyCare Log permite anexar fotos aos registros de sintomas e medicações. As imagens são armazenadas no Supabase Storage e referenciadas nos registros.
+O Cubbi permite anexar fotos aos registros de sintomas e medicações. As imagens são armazenadas no Supabase Storage e referenciadas nos registros.
 
 ## Funcionalidades
 

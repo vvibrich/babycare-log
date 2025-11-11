@@ -2,7 +2,7 @@
 
 ## Como Funciona
 
-O BabyCare Log utiliza **Supabase Realtime** para atualizar automaticamente os dados sem precisar recarregar a página.
+O Cubbi utiliza **Supabase Realtime** para atualizar automaticamente os dados sem precisar recarregar a página.
 
 ### Tecnologias Utilizadas
 

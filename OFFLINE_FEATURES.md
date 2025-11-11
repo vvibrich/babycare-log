@@ -1,8 +1,8 @@
-# 📱 Funcionalidades Offline - BabyCare Log
+# 📱 Funcionalidades Offline - Cubbi
 
 ## ✅ Implementação Completa
 
-O BabyCare Log agora funciona **completamente offline**! Os usuários podem criar, editar e visualizar registros mesmo sem conexão com a internet.
+O Cubbi agora funciona **completamente offline**! Os usuários podem criar, editar e visualizar registros mesmo sem conexão com a internet.
 
 ## 🏗️ Arquitetura
 
@@ -145,4 +145,4 @@ await createRecord({
 
 ## 🎉 Resultado Final
 
-O BabyCare Log agora é um **PWA completo e funcional** que permite aos pais registrarem os cuidados de suas crianças **a qualquer momento, em qualquer lugar**, mesmo sem internet!
+O Cubbi agora é um **PWA completo e funcional** que permite aos pais registrarem os cuidados de suas crianças **a qualquer momento, em qualquer lugar**, mesmo sem internet!
