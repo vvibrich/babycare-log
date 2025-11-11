@@ -1,50 +1,69 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { UserPlus } from 'lucide-react';
-import Link from 'next/link';
-import { Logo } from '@/components/Logo';
+import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { UserPlus } from "lucide-react";
+import Link from "next/link";
+import { Logo } from "@/components/Logo";
 
 export default function SignUpPage() {
   const { signUp } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
+    fullName: "",
+    phone: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
-      setError('As senhas não coincidem');
+      setError("As senhas não coincidem");
       return;
     }
 
     // Validate password length
     if (formData.password.length < 6) {
-      setError('A senha deve ter no mínimo 6 caracteres');
+      setError("A senha deve ter no mínimo 6 caracteres");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      await signUp(formData.email, formData.password);
+      await signUp({
+        email: formData.email,
+        password: formData.password,
+        fullName: formData.fullName,
+        phone: formData.phone,
+      });
       // Reset form after successful signup
-      setFormData({ email: '', password: '', confirmPassword: '' });
+      setFormData({
+        fullName: "",
+        phone: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
     } catch (error: any) {
-      console.error('Signup error:', error);
-      setError(error.message || 'Erro ao criar conta. Tente novamente.');
+      console.error("Signup error:", error);
+      setError(error.message || "Erro ao criar conta. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -68,9 +87,42 @@ export default function SignUpPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg">
-                <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                <p className="text-sm text-red-600 dark:text-red-400">
+                  {error}
+                </p>
               </div>
             )}
+
+            <div className="space-y-2">
+              <Label htmlFor="fullName">Nome completo</Label>
+              <Input
+                id="fullName"
+                placeholder="Ex: Maria Silva"
+                value={formData.fullName}
+                onChange={(e) =>
+                  setFormData({ ...formData, fullName: e.target.value })
+                }
+                required
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="phone">Telefone</Label>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="(11) 91234-5678"
+                value={formData.phone}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
+                disabled={isLoading}
+              />
+              <p className="text-xs text-muted-foreground">
+                Usado para contato rápido em emergências.
+              </p>
+            </div>
 
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -120,18 +172,17 @@ export default function SignUpPage() {
               />
             </div>
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isLoading}
-            >
+            <Button type="submit" className="w-full" disabled={isLoading}>
               <UserPlus className="mr-2 h-4 w-4" />
-              {isLoading ? 'Criando conta...' : 'Criar Conta'}
+              {isLoading ? "Criando conta..." : "Criar Conta"}
             </Button>
 
             <div className="text-center text-sm">
               <span className="text-muted-foreground">Já tem uma conta? </span>
-              <Link href="/login" className="text-blue-600 hover:underline dark:text-blue-400">
+              <Link
+                href="/login"
+                className="text-blue-600 hover:underline dark:text-blue-400"
+              >
                 Faça login
               </Link>
             </div>

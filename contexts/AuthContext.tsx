@@ -5,11 +5,18 @@ import { supabase } from '@/lib/supabaseClient';
 import { User } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
 
+type SignUpParams = {
+  email: string;
+  password: string;
+  fullName?: string;
+  phone?: string;
+};
+
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
+  signUp: (params: SignUpParams) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -47,14 +54,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.push('/dashboard');
   };
 
-  const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
+  const signUp = async ({ email, password, fullName, phone }: SignUpParams) => {
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
 
     if (error) throw error;
-    
+
+    const userId = data?.user?.id;
+
+    if (userId && (fullName?.trim() || phone?.trim())) {
+      const { error: profileError } = await supabase
+        .from('user_profiles')
+        .upsert(
+          {
+            user_id: userId,
+            full_name: fullName?.trim() || null,
+            phone: phone?.trim() || null,
+          },
+          { onConflict: 'user_id' }
+        );
+
+      if (profileError) {
+        console.error('Error creating user profile:', profileError);
+        throw profileError;
+      }
+    }
+
     // Show success message
     alert('Conta criada! Verifique seu email para confirmar o cadastro.');
   };

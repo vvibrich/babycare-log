@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabaseClient';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 import {
   AlertCircle,
   CheckCircle2,
@@ -25,7 +25,7 @@ import {
   ShieldAlert,
   User as UserIcon,
   UserCheck,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface ProfileFormState {
   full_name: string;
@@ -38,13 +38,13 @@ interface ProfileFormState {
 }
 
 const emptyProfile: ProfileFormState = {
-  full_name: '',
-  age: '',
-  phone: '',
-  city: '',
-  bio: '',
-  emergency_contact_name: '',
-  emergency_contact_phone: '',
+  full_name: "",
+  age: "",
+  phone: "",
+  city: "",
+  bio: "",
+  emergency_contact_name: "",
+  emergency_contact_phone: "",
 };
 
 export default function ProfilePage() {
@@ -52,11 +52,12 @@ export default function ProfilePage() {
   const { user, loading } = useAuth();
 
   const [formData, setFormData] = useState<ProfileFormState>(emptyProfile);
-  const [initialSnapshot, setInitialSnapshot] = useState<ProfileFormState>(emptyProfile);
+  const [initialSnapshot, setInitialSnapshot] =
+    useState<ProfileFormState>(emptyProfile);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const isDirty = useMemo(() => {
     return JSON.stringify(formData) !== JSON.stringify(initialSnapshot);
@@ -66,32 +67,35 @@ export default function ProfilePage() {
     if (loading) return;
 
     if (!user) {
-      router.push('/login');
+      router.push("/login");
       return;
     }
 
     const fetchProfile = async () => {
       setIsLoading(true);
-      setErrorMessage('');
+      setErrorMessage("");
 
       try {
         const { data, error } = await supabase
-          .from('user_profiles')
-          .select('*')
-          .eq('user_id', user.id)
+          .from("user_profiles")
+          .select("*")
+          .eq("user_id", user.id)
           .maybeSingle();
 
         if (error) throw error;
 
         if (data) {
           const profile: ProfileFormState = {
-            full_name: data.full_name ?? '',
-            age: data.age !== null && data.age !== undefined ? String(data.age) : '',
-            phone: data.phone ?? '',
-            city: data.city ?? '',
-            bio: data.bio ?? '',
-            emergency_contact_name: data.emergency_contact_name ?? '',
-            emergency_contact_phone: data.emergency_contact_phone ?? '',
+            full_name: data.full_name ?? "",
+            age:
+              data.age !== null && data.age !== undefined
+                ? String(data.age)
+                : "",
+            phone: data.phone ?? "",
+            city: data.city ?? "",
+            bio: data.bio ?? "",
+            emergency_contact_name: data.emergency_contact_name ?? "",
+            emergency_contact_phone: data.emergency_contact_phone ?? "",
           };
           setFormData(profile);
           setInitialSnapshot(profile);
@@ -100,8 +104,10 @@ export default function ProfilePage() {
           setInitialSnapshot(emptyProfile);
         }
       } catch (error) {
-        console.error('Error fetching profile:', error);
-        setErrorMessage('Não foi possível carregar seu perfil. Tente novamente mais tarde.');
+        console.error("Error fetching profile:", error);
+        setErrorMessage(
+          "Não foi possível carregar seu perfil. Tente novamente mais tarde."
+        );
       } finally {
         setIsLoading(false);
       }
@@ -110,17 +116,17 @@ export default function ProfilePage() {
     fetchProfile();
   }, [loading, router, user]);
 
-  const handleChange = (
-    field: keyof ProfileFormState,
-  ) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const value = event.target.value;
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+  const handleChange =
+    (field: keyof ProfileFormState) =>
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const value = event.target.value;
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    };
 
   const handleReset = () => {
     setFormData(initialSnapshot);
-    setSuccessMessage('');
-    setErrorMessage('');
+    setSuccessMessage("");
+    setErrorMessage("");
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -128,20 +134,20 @@ export default function ProfilePage() {
     if (!user) return;
 
     if (!formData.full_name.trim()) {
-      setErrorMessage('Informe seu nome completo.');
-      setSuccessMessage('');
+      setErrorMessage("Informe seu nome completo.");
+      setSuccessMessage("");
       return;
     }
 
     if (formData.age && Number(formData.age) < 0) {
-      setErrorMessage('A idade deve ser um número positivo.');
-      setSuccessMessage('');
+      setErrorMessage("A idade deve ser um número positivo.");
+      setSuccessMessage("");
       return;
     }
 
     setIsSaving(true);
-    setErrorMessage('');
-    setSuccessMessage('');
+    setErrorMessage("");
+    setSuccessMessage("");
 
     try {
       const payload = {
@@ -152,31 +158,37 @@ export default function ProfilePage() {
         city: formData.city.trim() || null,
         bio: formData.bio.trim() || null,
         emergency_contact_name: formData.emergency_contact_name.trim() || null,
-        emergency_contact_phone: formData.emergency_contact_phone.trim() || null,
+        emergency_contact_phone:
+          formData.emergency_contact_phone.trim() || null,
       };
 
       const { error } = await supabase
-        .from('user_profiles')
-        .upsert(payload, { onConflict: 'user_id' });
+        .from("user_profiles")
+        .upsert(payload, { onConflict: "user_id" });
 
       if (error) throw error;
 
       const snapshot: ProfileFormState = {
         full_name: payload.full_name,
-        age: payload.age !== null && payload.age !== undefined ? String(payload.age) : '',
-        phone: payload.phone ?? '',
-        city: payload.city ?? '',
-        bio: payload.bio ?? '',
-        emergency_contact_name: payload.emergency_contact_name ?? '',
-        emergency_contact_phone: payload.emergency_contact_phone ?? '',
+        age:
+          payload.age !== null && payload.age !== undefined
+            ? String(payload.age)
+            : "",
+        phone: payload.phone ?? "",
+        city: payload.city ?? "",
+        bio: payload.bio ?? "",
+        emergency_contact_name: payload.emergency_contact_name ?? "",
+        emergency_contact_phone: payload.emergency_contact_phone ?? "",
       };
 
       setInitialSnapshot(snapshot);
       setFormData(snapshot);
-      setSuccessMessage('Perfil atualizado com sucesso!');
+      setSuccessMessage("Perfil atualizado com sucesso!");
     } catch (error: any) {
-      console.error('Error saving profile:', error);
-      setErrorMessage(error?.message || 'Erro ao salvar perfil. Tente novamente.');
+      console.error("Error saving profile:", error);
+      setErrorMessage(
+        error?.message || "Erro ao salvar perfil. Tente novamente."
+      );
     } finally {
       setIsSaving(false);
     }
@@ -200,9 +212,12 @@ export default function ProfilePage() {
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-purple-100 text-purple-600 dark:bg-purple-950/40 dark:text-purple-300">
             <UserCheck className="h-6 w-6" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Seu Perfil</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            Seu Perfil
+          </h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Complete seus dados para personalizar a experiência e facilitar o suporte médico.
+            Complete seus dados para personalizar a experiência e facilitar o
+            suporte médico.
           </p>
         </div>
 
@@ -210,7 +225,8 @@ export default function ProfilePage() {
           <CardHeader>
             <CardTitle>Informações Pessoais</CardTitle>
             <CardDescription>
-              Esses dados ajudam a equipe médica a acompanhar melhor a saúde do seu bebê.
+              Esses dados ajudam a equipe médica a acompanhar melhor a saúde do
+              seu bebê.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -234,9 +250,9 @@ export default function ProfilePage() {
                   <Label htmlFor="full_name">Nome completo *</Label>
                   <Input
                     id="full_name"
-                    placeholder="Ex: Ana Clara Souza"
+                    placeholder="Ex: Maria Silva"
                     value={formData.full_name}
-                    onChange={handleChange('full_name')}
+                    onChange={handleChange("full_name")}
                     required
                   />
                 </div>
@@ -249,7 +265,7 @@ export default function ProfilePage() {
                     min="0"
                     placeholder="Ex: 32"
                     value={formData.age}
-                    onChange={handleChange('age')}
+                    onChange={handleChange("age")}
                   />
                 </div>
               </div>
@@ -264,7 +280,7 @@ export default function ProfilePage() {
                     type="tel"
                     placeholder="(11) 91234-5678"
                     value={formData.phone}
-                    onChange={handleChange('phone')}
+                    onChange={handleChange("phone")}
                   />
                 </div>
 
@@ -276,21 +292,22 @@ export default function ProfilePage() {
                     id="city"
                     placeholder="Ex: São Paulo - SP"
                     value={formData.city}
-                    onChange={handleChange('city')}
+                    onChange={handleChange("city")}
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="bio" className="flex items-center gap-2">
-                  <UserIcon className="h-4 w-4 text-muted-foreground" /> Sobre você
+                  <UserIcon className="h-4 w-4 text-muted-foreground" /> Sobre
+                  você
                 </Label>
                 <Textarea
                   id="bio"
                   rows={4}
                   placeholder="Compartilhe informações relevantes sobre você, sua rotina ou observações importantes."
                   value={formData.bio}
-                  onChange={handleChange('bio')}
+                  onChange={handleChange("bio")}
                 />
               </div>
 
@@ -301,23 +318,27 @@ export default function ProfilePage() {
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="emergency_contact_name">Nome do contato</Label>
+                    <Label htmlFor="emergency_contact_name">
+                      Nome do contato
+                    </Label>
                     <Input
                       id="emergency_contact_name"
                       placeholder="Ex: João Silva"
                       value={formData.emergency_contact_name}
-                      onChange={handleChange('emergency_contact_name')}
+                      onChange={handleChange("emergency_contact_name")}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="emergency_contact_phone">Telefone do contato</Label>
+                    <Label htmlFor="emergency_contact_phone">
+                      Telefone do contato
+                    </Label>
                     <Input
                       id="emergency_contact_phone"
                       type="tel"
                       placeholder="(11) 98765-4321"
                       value={formData.emergency_contact_phone}
-                      onChange={handleChange('emergency_contact_phone')}
+                      onChange={handleChange("emergency_contact_phone")}
                     />
                   </div>
                 </div>
@@ -344,7 +365,7 @@ export default function ProfilePage() {
                     className="flex items-center justify-center gap-2"
                   >
                     <Save className="h-4 w-4" />
-                    {isSaving ? 'Salvando...' : 'Salvar perfil'}
+                    {isSaving ? "Salvando..." : "Salvar perfil"}
                   </Button>
                 </div>
               </div>
