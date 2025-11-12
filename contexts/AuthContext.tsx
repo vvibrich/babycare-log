@@ -55,32 +55,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signUp = async ({ email, password, fullName, phone }: SignUpParams) => {
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          full_name: fullName?.trim() || null,
+          phone: phone?.trim() || null,
+        },
+      },
     });
 
     if (error) throw error;
-
-    const userId = data?.user?.id;
-
-    if (userId && (fullName?.trim() || phone?.trim())) {
-      const { error: profileError } = await supabase
-        .from('user_profiles')
-        .upsert(
-          {
-            user_id: userId,
-            full_name: fullName?.trim() || null,
-            phone: phone?.trim() || null,
-          },
-          { onConflict: 'user_id' }
-        );
-
-      if (profileError) {
-        console.error('Error creating user profile:', profileError);
-        throw profileError;
-      }
-    }
 
     // Show success message
     alert('Conta criada! Verifique seu email para confirmar o cadastro.');
