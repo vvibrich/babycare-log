@@ -62,31 +62,34 @@ export default function ReportPage() {
 
   const fetchChildren = async () => {
     try {
-      const { data, error } = await supabase
-        .from('children')
-        .select('*')
-        .eq('is_active', true)
-        .order('name', { ascending: true });
+      const { data: childrenRows, error: childrenError } = await supabase
+        .rpc('get_accessible_children');
 
-      if (error) throw error;
+      if (childrenError) throw childrenError;
 
-      const childrenData = data || [];
-      setChildren(childrenData);
+      const childrenData = (childrenRows ?? []) as Child[];
+      const activeChildren = childrenData.filter(child => child.is_active);
+
+      if (!activeChildren.length) {
+        setChildren([]);
+        setSelectedChildId('');
+        setChildName('');
+        setSelectedChild(null);
+        localStorage.removeItem('selectedChildId');
+        return;
+      }
+
+      const sortedChildren = [...activeChildren].sort((a, b) => a.name.localeCompare(b.name));
+      setChildren(sortedChildren);
 
       // Auto-select from localStorage or first child
       const savedChildId = localStorage.getItem('selectedChildId');
-      if (savedChildId && childrenData.find(c => c.id === savedChildId)) {
-        setSelectedChildId(savedChildId);
-        const child = childrenData.find(c => c.id === savedChildId);
-        if (child) {
-          setChildName(child.name);
-          setSelectedChild(child);
-        }
-      } else if (childrenData.length > 0) {
-        setSelectedChildId(childrenData[0].id);
-        setChildName(childrenData[0].name);
-        setSelectedChild(childrenData[0]);
-      }
+      const savedChild = savedChildId ? sortedChildren.find(c => c.id === savedChildId) : undefined;
+
+      const nextChild = savedChild ?? sortedChildren[0];
+      setSelectedChildId(nextChild.id);
+      setChildName(nextChild.name);
+      setSelectedChild(nextChild);
     } catch (error) {
       console.error('Error fetching children:', error);
     }
@@ -217,11 +220,11 @@ export default function ReportPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">Configurações do Relatório</CardTitle>
-              <CardDescription>
-                Escolha o tipo de relatório, período e exporte em PDF ou CSV
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
+            <CardDescription>
+              Escolha o tipo de relatório, período e exporte em PDF ou CSV
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
               {/* Child Selector */}
               <div className="space-y-2">
                 <Label htmlFor="child">Selecione a Criança *</Label>
@@ -346,8 +349,8 @@ export default function ReportPage() {
                   disabled={filteredRecords.length === 0 || (reportType === 'incident' && !selectedIncidentId)}
                 />
               </div>
-            </CardContent>
-          </Card>
+          </CardContent>
+        </Card>
 
           {/* Preview */}
           {filteredRecords.length > 0 && (

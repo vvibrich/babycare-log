@@ -10,9 +10,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { formatDate } from '@/utils/formatDate';
 
+type ChildAccessRole = 'owner' | 'editor' | 'viewer';
+type ChildWithAccess = Child & { access_role: ChildAccessRole };
+
 export default function ChildrenPage() {
   const router = useRouter();
-  const [children, setChildren] = useState<Child[]>([]);
+  const [children, setChildren] = useState<ChildWithAccess[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -22,13 +25,13 @@ export default function ChildrenPage() {
 
   const fetchChildren = async () => {
     try {
-      const { data, error } = await supabase
-        .from('children')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { data: childrenRows, error: childrenError } = await supabase
+        .rpc('get_accessible_children');
 
-      if (error) throw error;
-      setChildren(data || []);
+      if (childrenError) throw childrenError;
+
+      const childrenData = (childrenRows ?? []) as ChildWithAccess[];
+      setChildren(childrenData);
     } catch (error) {
       console.error('Error fetching children:', error);
     } finally {
@@ -152,7 +155,9 @@ export default function ChildrenPage() {
             </Card>
           ) : (
             <div className="grid gap-4">
-              {children.map((child) => (
+              {children.map((child) => {
+                const isOwner = child.access_role === 'owner';
+                return (
                 <Card key={child.id} className={`relative overflow-hidden border-l-4 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm hover:shadow-lg transition-all duration-200 ${
                   !child.is_active 
                     ? 'opacity-60 border-l-gray-400' 
@@ -234,23 +239,26 @@ export default function ChildrenPage() {
                       
                       {/* Action Buttons */}
                       <div className="flex gap-1 ml-4">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => router.push(`/children/${child.id}/access`)}
-                          title="Gerenciar Acesso"
-                          className="h-8 w-8 p-0"
-                        >
-                          <Users className="h-4 w-4 text-purple-500" />
-                        </Button>
+                        {isOwner && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => router.push(`/children/${child.id}/access`)}
+                            title="Gerenciar Acesso"
+                            className="h-8 w-8 p-0"
+                          >
+                            <Users className="h-4 w-4 text-purple-500" />
+                          </Button>
+                        )}
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => router.push(`/children/${child.id}/edit`)}
-                          title="Editar"
+                          title={isOwner ? 'Editar' : 'Visualizar'}
                           className="h-8 w-8 p-0"
+                          disabled={!isOwner}
                         >
-                          <Edit className="h-4 w-4 text-blue-500" />
+                          <Edit className={`h-4 w-4 ${isOwner ? 'text-blue-500' : 'text-muted-foreground'}`} />
                         </Button>
                         <Button
                           variant="ghost"
@@ -258,6 +266,7 @@ export default function ChildrenPage() {
                           onClick={() => toggleActive(child.id, child.is_active)}
                           title={child.is_active ? 'Desativar' : 'Ativar'}
                           className="h-8 w-8 p-0"
+                          disabled={!isOwner}
                         >
                           <span className="text-sm">
                             {child.is_active ? '🔵' : '⚪'}
@@ -267,17 +276,18 @@ export default function ChildrenPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleDelete(child.id)}
-                          disabled={deletingId === child.id}
+                          disabled={deletingId === child.id || !isOwner}
                           title="Excluir"
                           className="h-8 w-8 p-0"
                         >
-                          <Trash2 className="h-4 w-4 text-red-500" />
+                          <Trash2 className={`h-4 w-4 ${isOwner ? 'text-red-500' : 'text-muted-foreground'}`} />
                         </Button>
                       </div>
                     </div>
                   </CardHeader>
                 </Card>
-              ))}
+              );
+            })}
             </div>
           )}
         </div>

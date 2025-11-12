@@ -16,9 +16,12 @@ import { Button } from "@/components/ui/button";
 import { Plus, RefreshCw } from "lucide-react";
 import Link from "next/link";
 
+type ChildAccessRole = "owner" | "editor" | "viewer";
+type ChildWithAccess = Child & { access_role: ChildAccessRole };
+
 export function HomePage() {
   const [records, setRecords] = useState<Record[]>([]);
-  const [children, setChildren] = useState<Child[]>([]);
+  const [children, setChildren] = useState<ChildWithAccess[]>([]);
   const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -34,23 +37,47 @@ export function HomePage() {
         return;
       }
 
-      const { data, error } = await supabase
-        .from("children")
-        .select("*")
-        .order("created_at", { ascending: false });
+      const { data: childrenRows, error: childrenError } = await supabase
+        .rpc("get_accessible_children");
 
-      if (error) throw error;
+      if (childrenError) throw childrenError;
 
-      const childrenData = data || [];
+      const childrenData = (childrenRows ?? []) as ChildWithAccess[];
+
+      if (!childrenData.length) {
+        setChildren([]);
+        setIsLoading(false);
+        localStorage.removeItem("selectedChildId");
+        return;
+      }
+
       setChildren(childrenData);
 
-      // Auto-select first active child if none selected
-      if (!selectedChildId && childrenData.length > 0) {
-        const firstActive = childrenData.find((c) => c.is_active);
-        if (firstActive) {
-          setSelectedChildId(firstActive.id);
-          localStorage.setItem("selectedChildId", firstActive.id);
+      const savedChildId = localStorage.getItem("selectedChildId");
+      const currentChildExists = savedChildId
+        ? childrenData.some((child) => child.id === savedChildId)
+        : false;
+
+      const nextChildId =
+        (currentChildExists && savedChildId) ||
+        childrenData.find((child) => child.is_active)?.id ||
+        childrenData[0]?.id ||
+        null;
+
+      if (nextChildId) {
+        if (selectedChildId !== nextChildId) {
+          setSelectedChildId(nextChildId);
         }
+        localStorage.setItem("selectedChildId", nextChildId);
+      } else {
+        if (selectedChildId !== null) {
+          setSelectedChildId(null);
+        }
+        localStorage.removeItem("selectedChildId");
+      }
+
+      if (childrenData.length === 0) {
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("Error fetching children:", error);

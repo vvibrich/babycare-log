@@ -41,21 +41,28 @@ export default function RecordsPage() {
         return;
       }
 
-      const { data, error } = await supabase
-        .from('children')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { data: childrenRows, error: childrenError } = await supabase
+        .rpc('get_accessible_children');
 
-      if (error) throw error;
+      if (childrenError) throw childrenError;
 
-      setChildren(data || []);
+      const childrenData = (childrenRows ?? []) as Child[];
+
+      if (!childrenData.length) {
+        setChildren([]);
+        setSelectedChildId(null);
+        localStorage.removeItem('selectedChildId');
+        return;
+      }
+
+      setChildren(childrenData);
       
       // Auto-select first child or from localStorage
       const savedChildId = localStorage.getItem('selectedChildId');
-      if (savedChildId && data?.some(c => c.id === savedChildId)) {
+      if (savedChildId && childrenData.some(c => c.id === savedChildId)) {
         setSelectedChildId(savedChildId);
-      } else if (data && data.length > 0) {
-        setSelectedChildId(data[0].id);
+      } else {
+        setSelectedChildId(childrenData[0].id);
       }
     } catch (error) {
       console.error('Error fetching children:', error);
